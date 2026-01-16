@@ -1,4 +1,127 @@
-% book/chapters/ch08-replay-verification.tex
+\section{Chapter 8. Replay and Verification Skeleton (normative)}
+\label{sec:partIII-ch8}
+
+\paragraph{Goal.} Define replay/verification \emph{mathematically} without committing to implementation.
+
+\subsubsection{Receipt canonicalization and binding (normative)}
+
+\begin{definition}[Receipt canonicalization]
+\label{def:canon-ch8}
+A \emph{canonicalization map} is a function
+\[
+\canon:R\to R.
+\]
+\end{definition}
+
+\begin{axiom}[R0: Canonicalization idempotence]
+\label{ax:R0-idem}
+For all $r\in R$,
+\[
+\canon(\canon(r))=\canon(r).
+\]
+\end{axiom}
+
+\begin{definition}[Envelope binding (partial)]
+\label{def:bind}
+An \emph{envelope binding map} is a partial function
+\[
+\bind:R \rightharpoonup \Gamma,
+\]
+intended to recover (at least) the effective regime/epoch from a receipt.
+\end{definition}
+
+\begin{axiom}[B0: Binding coherence with execution]
+\label{ax:B0-bind-coh}
+There exists a designated set of \emph{binding fields} of envelopes (instance-defined) such that:
+for every execution witness
+\[
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma'),
+\]
+the value $\bind(\canon(r'))$ is defined and agrees with $\gamma$ on the declared binding fields.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:B0-bind-coh} does \emph{not} require $\bind(\canon(r'))=\gamma$ in full; it requires agreement on
+those components the theory declares to be binding-relevant (e.g.\ epoch, policy-id, regime tag, version).
+\end{remark}
+
+\subsubsection{Replay relation (normative)}
+
+\begin{definition}[Replay relation (partial)]
+\label{def:replay-rel}
+A \emph{replay relation} is a relation
+\[
+\Replay\ \subseteq\ (R\times U)\times (V\times 2).
+\]
+We write
+\[
+(r,u)\Replay (v,d)
+\]
+to mean: ``replaying receipt $r$ on artifact $u$ yields valuation $v$ and decision $d$.''
+
+Replay is allowed to be partial: for some $(r,u)$ there may be no related $(v,d)$.
+\end{definition}
+
+\begin{remark}
+Replay is intentionally detached from kernel internals. It is a mathematical relation that
+connects (receipt, artifact) pairs to (valuation, decision) outputs.
+\end{remark}
+
+\subsubsection{Verification predicate (minimum interface) (normative)}
+
+\begin{definition}[Verification predicate (minimum interface)]
+\label{def:verify-min}
+A \emph{verification predicate} is a map returning a decision bit:
+\[
+\Verify:\ R\times U\times \Gamma \times \ThetaSpace \times \BetaSpace \times C \ \to\ 2,
+\]
+where $\ThetaSpace$ and $\BetaSpace$ are the carriers for floor settings and invariance budgets (when present).
+In contexts where $(\Theta,\beta,C)$ are not explicit, the corresponding arguments may be omitted, yielding the minimal form:
+\[
+\Verify:\ R\times U\times \Gamma \to 2.
+\]
+\end{definition}
+
+\begin{remark}
+The purpose of $\Verify$ here is not to prescribe \emph{how} verification is done, but to insist that
+verification is a well-typed mathematical judgment, potentially parameterized by envelope and targets.
+\end{remark}
+
+\subsubsection{Minimal theorem targets (normative)}
+
+\begin{definition}[Replay determinism on a domain]
+\label{def:replay-det-domain}
+Let $D\subseteq R\times U$. Replay is \emph{deterministic on $D$} if for all $(r,u)\in D$:
+\[
+(r,u)\Replay(v_1,d_1)\ \wedge\ (r,u)\Replay(v_2,d_2)
+\quad\Rightarrow\quad
+(v_1,d_1)=(v_2,d_2).
+\]
+\end{definition}
+
+\begin{theorem}[Replay determinism under canonical receipts (target)]
+\label{thm:replay-det-canon}
+Assume there exists a domain $D\subseteq R\times U$ such that:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item (\emph{canonical definedness}) for all $(r,u)\in D$, there exists $(v,d)$ with $(\canon(r),u)\Replay(v,d)$;
+  \item (\emph{canonical determinism}) replay is deterministic on $\{(\canon(r),u):(r,u)\in D\}$ in the sense of
+        Definition~\ref{def:replay-det-domain}.
+\end{enumerate}
+Then canonical receipts support deterministic replay on $D$: for all $(r,u)\in D$ there exists a unique $(v,d)$ with
+\[
+(\canon(r),u)\Replay(v,d).
+\]
+\end{theorem}
+
+\begin{proof}
+By (1) replay is defined on $(\canon(r),u)$ for each $(r,u)\in D$; by (2) any two replay outcomes must be equal,
+so the outcome is unique.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:replay-det-canon} is phrased as a \emph{target} because the sufficient hypotheses are instance-dependent.
+Many instances enforce it by designing receipts whose canonical form fixes all replay-relevant choices.
+\end{remark}k/chapters/ch08-replay-verification.tex
 
 \subsection{Chapter 8. Replay and Verification Skeleton}
 

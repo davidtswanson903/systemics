@@ -1,5 +1,149 @@
-% book/chapters/ch11-rewrite-normal-forms.tex
+\section{Chapter 11. Rewrite System and Normal Forms (normative)}
+\label{sec:partIV-ch11}
 
-\subsection{Chapter 11. Rewrite System and Normal Forms}
+\paragraph{Goal.} Make refactoring $=$ rewriting-to-normal-form.
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\subsubsection{Rewrite system (normative)}
+
+\begin{definition}[Rewrite system on expressions]
+\label{def:rewrite-system}
+A \emph{rewrite system} is a binary relation $\Rewrite \ \subseteq\ \mathcal{E}\times \mathcal{E}$.
+We write $E\Rewrite E'$ for a single rewrite step and define its reflexive-transitive closure
+$E\RewriteStar E'$ as ``zero or more steps.''
+\end{definition}
+
+\begin{definition}[Rewrite soundness condition]
+\label{def:rewrite-sound}
+A rewrite system is \emph{sound} (with respect to induced kernel equivalence $\simeq$; Chapter~9) if every rule preserves semantics up to $\simeq$:
+\[
+E\Rewrite E' \quad\Rightarrow\quad \llbracket E\rrbracket \simeq \llbracket E'\rrbracket.
+\]
+\end{definition}
+
+\begin{remark}
+Soundness is the formal statement that a rewrite is a \emph{refactoring}: it changes syntax but not the process, up to the declared observational boundary.
+\end{remark}
+
+\subsubsection{Canonical rule families (normative)}
+
+This chapter fixes a minimal, portable set of rule families. Any Systemics theory instance must
+either adopt these rules or explicitly declare replacements.
+
+\paragraph{(R1) Sequential reassociation.}
+\[
+(E_3\seqc E_2)\seqc E_1 \Rewrite E_3\seqc (E_2\seqc E_1).
+\]
+
+\paragraph{(R2) Parallel reassociation (optional).}
+If $\parc$ is present:
+\[
+(E_1\parc E_2)\parc E_3 \Rewrite E_1\parc (E_2\parc E_3).
+\]
+
+\paragraph{(R3) Identity elimination (optional but recommended).}
+If an identity $\mathrm{Id}$ is present:
+\[
+E\seqc \mathrm{Id} \Rewrite E,
+\qquad
+\mathrm{Id}\seqc E \Rewrite E.
+\]
+
+\paragraph{(R4) Parallel commutation to a canonical order (optional).}
+If $\parc$ is commutative up to $\simeq$, choose a total preorder key $\kappa:\mathcal{E}\to \mathsf{Key}$ and impose:
+\[
+E_1\parc E_2 \Rewrite
+\begin{cases}
+E_1\parc E_2 & \text{if }\kappa(E_1)\le \kappa(E_2),\\
+E_2\parc E_1 & \text{otherwise.}
+\end{cases}
+\]
+
+\begin{remark}
+Rules (R1)--(R4) correspond to the algebraic law table (Chapter~5). Their soundness depends on:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item associativity/unit/symmetry laws holding \emph{up to} $\simeq$,
+  \item $\simeq$ being a congruence for the relevant operators (Chapter~9).
+\end{itemize}
+\end{remark}
+
+\subsubsection{Normal forms and normalization (normative)}
+
+\begin{definition}[Normal form predicate]
+\label{def:NF}
+A \emph{normal form predicate} is a predicate $\NF(\cdot)$ on $\mathcal{E}$ intended to characterize irreducible (canonical) expressions.
+\end{definition}
+
+\begin{definition}[Normalization function]
+\label{def:Norm}
+A \emph{normalization function} is a map
+\[
+\Norm:\ \mathcal{E}\to \mathcal{E}
+\]
+such that $\NF(\Norm(E))$ holds for all $E\in\mathcal{E}$.
+\end{definition}
+
+\begin{remark}
+Normalization is the mathematical form of ``canonical refactoring.'' It produces a representative of an equivalence class of pipelines.
+\end{remark}
+
+\subsubsection{Soundness of normalization (normative)}
+
+\begin{theorem}[Normalization soundness]
+\label{thm:norm-sound}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the rewrite system is sound (Definition~\ref{def:rewrite-sound}),
+  \item the induced kernel equivalence $\simeq$ is a congruence for the expression constructors (Chapter~9),
+  \item for every $E$, there exists a derivation $E \RewriteStar \Norm(E)$.
+\end{enumerate}
+Then for all $E\in\mathcal{E}$,
+\[
+\llbracket E\rrbracket \ \simeq\ \llbracket \Norm(E)\rrbracket.
+\]
+\end{theorem}
+
+\begin{proof}
+By assumption (3), there is a finite chain
+\[
+E=E_0 \Rewrite E_1 \Rewrite \cdots \Rewrite E_n=\Norm(E).
+\]
+By rewrite soundness, for each step $E_i\Rewrite E_{i+1}$ we have
+$\llbracket E_i\rrbracket \simeq \llbracket E_{i+1}\rrbracket$.
+By transitivity of $\simeq$ (Theorem~\ref{thm:kernel-eq-rel}), the endpoints satisfy
+$\llbracket E\rrbracket \simeq \llbracket \Norm(E)\rrbracket$.
+\end{proof}
+
+\begin{corollary}[Normalization idempotence (recommended)]
+\label{cor:norm-idem}
+If $\Norm$ is defined to act as the identity on normal forms (i.e.\ $\NF(E)\Rightarrow \Norm(E)=E$), then
+\[
+\Norm(\Norm(E))=\Norm(E)
+\quad\text{for all }E.
+\]
+\end{corollary}
+
+\begin{proof}
+Since $\Norm(E)$ is a normal form by Definition~\ref{def:Norm}, apply the identity-on-normal-forms property.
+\end{proof}
+
+\subsubsection{Optional strengthening: uniqueness of normal forms (normative option)}
+
+\begin{definition}[Unique normal forms]
+\label{def:UNF}
+A rewrite system has \emph{unique normal forms} if whenever $E\RewriteStar E_1$ and $E\RewriteStar E_2$
+and $\NF(E_1)$ and $\NF(E_2)$, then $E_1=E_2$.
+\end{definition}
+
+\begin{theorem}[Termination + confluence implies uniqueness (standard)]
+\label{thm:term-confl-unique}
+If the rewrite system is terminating and confluent, then it has unique normal forms (Definition~\ref{def:UNF}).
+\end{theorem}
+
+\begin{remark}
+A Systemics theory may adopt uniqueness in one of three ways:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item prove termination+confluence for the chosen rule set,
+  \item restrict to a rule subset where these properties are easy,
+  \item or adopt unique normal forms as an explicit axiom (useful early, but less satisfying).
+\end{itemize}
+\end{remark}

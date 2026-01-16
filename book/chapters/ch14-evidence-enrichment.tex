@@ -1,5 +1,159 @@
 % book/chapters/ch14-evidence-enrichment.tex
 
-\subsection{Chapter 14. Evidence Enrichment}
+\subsection{Chapter 14. Evidence Enrichment (normative)}
+\label{sec:partV-ch14}
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\paragraph{Goal.} Receipts as proof objects with merge-closed verification.
+
+\subsubsection{Claim space and claim extraction (normative)}
+
+\begin{definition}[Claim space]
+\label{def:claim-space}
+Let $\mathsf{Claim}$ be a set of propositions (claims) that receipts may witness.
+A minimal claim schema may include:
+\[
+\phi=(\gamma,\Theta,\beta,C_{\max},\mathrm{in},\mathrm{out},v,d),
+\]
+asserting that under envelope $\gamma$, targets $(\Theta,\beta)$, and capacity bound $C_{\max}$,
+a given input produces a given output/valuation/decision in the intended semantics.
+\end{definition}
+
+\begin{definition}[Claim extraction]
+\label{def:claim-extraction}
+A \emph{claim extraction map} is a function
+\[
+\Phi:\ T^\star \to \mathsf{Claim},
+\]
+assigning to each trace $\tau$ the claim it purports to witness.
+\end{definition}
+
+\begin{remark}
+$\Phi$ is part of the mathematical interface of a Systemics theory: it declares what proposition is being proven by a trace's receipt.
+\end{remark}
+
+\subsubsection{Receipts as proof objects (normative)}
+
+\begin{definition}[Receipt entailment relation]
+\label{def:receipt-entails}
+An \emph{entailment intent} relation is a relation
+\[
+\Vdash\ \subseteq\ R\times \mathsf{Claim},
+\]
+where $r\Vdash \phi$ means ``$r$ is intended as a proof object for claim $\phi$.''
+\end{definition}
+
+\begin{definition}[Verifier]
+\label{def:verifier}
+A \emph{verifier} is a predicate
+\[
+\Verify:\ R\times \mathsf{Claim}\to 2,
+\]
+where $\Verify(r,\phi)=1$ means ``$r$ verifies claim $\phi$.'' The verifier is required to be
+\emph{independent} of the kernel's internal implementation: it depends only on the declared semantics and the receipt schema.
+\end{definition}
+
+\subsubsection{Verifier invariants (normative)}
+
+\begin{axiom}[E0: Canonical invariance of verification]
+\label{ax:E0-verify-canon}
+For all $r\in R$ and all $\phi\in \mathsf{Claim}$,
+\[
+\Verify(r,\phi)=\Verify(\canon(r),\phi).
+\]
+\end{axiom}
+
+\begin{axiom}[E1: Binding consistency]
+\label{ax:E1-verify-bind}
+If $\Verify(r,\phi)=1$, then $\bind(\canon(r))$ is defined and agrees with the envelope component of $\phi$
+on the declared binding fields (e.g.\ epoch/regime identifier).
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:E1-verify-bind} prevents ``receipt laundering'' across regimes: a receipt cannot verify a claim for an unrelated envelope.
+\end{remark}
+
+\subsubsection{Composed claims and evidence closure (normative)}
+
+\begin{definition}[Claim compatibility (sequential)]
+\label{def:claim-compat}
+Two claims $\phi_1,\phi_2\in\mathsf{Claim}$ are \emph{sequentially compatible}, written $\Compat_\phi(\phi_1,\phi_2)$,
+if the output interface fields of $\phi_1$ match the input interface fields of $\phi_2$ in the declared sense
+(e.g.\ output artifact equals next input artifact, and final envelope matches next initial envelope on binding fields).
+\end{definition}
+
+\begin{definition}[Claim composition (sequential)]
+\label{def:claim-compose}
+Given compatible claims $\Compat_\phi(\phi_1,\phi_2)$, define a composed claim
+\[
+\phi_{21}:=\phi_2\diamond \phi_1,
+\]
+whose components are determined by the declared composition mode (last-wins, product, aggregated) and the declared
+capacity/target propagation rule (e.g.\ $C_{\max,21}=C_{\max,2}\MergeC C_{\max,1}$ when applicable).
+\end{definition}
+
+\begin{definition}[Merge-closed verification (sequential)]
+\label{def:merge-closed-verify}
+Fix a receipt merge operator $\MergeR:R\times R\to R$ (from the composition kit) and define merged receipts by
+$r_{21}:=\canon(r_2\MergeR r_1)$.
+The verifier is \emph{merge-closed for sequential composition} if whenever
+\[
+\Verify(r_1,\phi_1)=1,\quad \Verify(r_2,\phi_2)=1,\quad \Compat_\phi(\phi_1,\phi_2),
+\]
+then the verifier can (from $r_{21}$) validate (i) the presence/references of subproofs for $r_1,r_2$, and (ii) the interface compatibility checks,
+and thereby conclude $\Verify(r_{21},\phi_2\diamond \phi_1)=1$.
+\end{definition}
+
+\begin{theorem}[Evidence closure under sequential composition]
+\label{thm:evidence-closure}
+Assume merge-closed verification (Definition~\ref{def:merge-closed-verify}). Then for all receipts and claims:
+\[
+\Verify(r_1,\phi_1)=1\ \wedge\ \Verify(r_2,\phi_2)=1\ \wedge\ \Compat_\phi(\phi_1,\phi_2)
+\ \Rightarrow\ 
+\Verify\!\big(\canon(r_2\MergeR r_1),\ \phi_2\diamond \phi_1\big)=1.
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+By merge-closed verification, $\canon(r_2\MergeR r_1)$ is checkable as a structured aggregate of the two subproofs and the compatibility witness.
+Since each subproof verifies its claim and the compatibility checks pass, the composed claim verifies.
+Axioms~\ref{ax:E0-verify-canon}--\ref{ax:E1-verify-bind} ensure canonical stability and envelope coherence.
+\end{proof}
+
+\begin{remark}
+A parallel version is obtained by replacing $\diamond$ with the parallel claim constructor (when $\parc$ is adopted) and by using the parallel trace/receipt constructor kit.
+\end{remark}
+
+\subsubsection{Proof-carrying conformance (normative)}
+
+\begin{definition}[Proof-carrying conformance contract]
+\label{def:pc-contract}
+Define the \emph{proof-carrying conformance contract} $\mathcal{C}_{\mathrm{pc}}\subseteq T^\star$ by:
+\[
+\tau\in \mathcal{C}_{\mathrm{pc}}
+\quad:\Longleftrightarrow\quad
+\Verify\!\big(r(\tau),\,\Phi(\tau)\big)=1,
+\]
+where $r(\tau)$ is the receipt component of $\tau$ and $\Phi$ is the claim extraction map (Definition~\ref{def:claim-extraction}).
+\end{definition}
+
+\begin{theorem}[Proof-carrying execution]
+\label{thm:pc-exec}
+If a kernel $K$ conforms to $\mathcal{C}_{\mathrm{pc}}$ (in the Chapter~6 sense), then every execution trace of $K$
+is accompanied by independently verifiable evidence of its declared claim.
+\end{theorem}
+
+\begin{proof}
+Immediate from Definition~\ref{def:pc-contract} and the definition of conformance as subset inclusion.
+\end{proof}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the evidence enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a claim space $\mathsf{Claim}$ and a claim extraction map $\Phi:T^\star\to\mathsf{Claim}$,
+  \item an entailment intent relation $\Vdash \subseteq R\times \mathsf{Claim}$,
+  \item a verifier predicate $\Verify:R\times\mathsf{Claim}\to 2$ satisfying Axioms~\ref{ax:E0-verify-canon}--\ref{ax:E1-verify-bind},
+  \item claim compatibility and composition rules (Definition~\ref{def:claim-compat}--\ref{def:claim-compose}),
+  \item merge-closed verification (Definition~\ref{def:merge-closed-verify}) or explicit alternative composition semantics,
+  \item the proof-carrying conformance contract $\mathcal{C}_{\mathrm{pc}}$.
+\end{enumerate}

@@ -1,5 +1,120 @@
-% book/chapters/ch07-execution-semantics.tex
+\section{Chapter 7. Execution Semantics (normative)}
+\label{sec:partIII-ch7}
 
-\subsection{Chapter 7. Execution Semantics}
+\paragraph{Goal.} Provide the canonical \emph{model class} for the algebra: relational execution semantics.
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\subsubsection{Relational execution semantics (normative)}
+
+\begin{definition}[Relational execution semantics]
+\label{def:exec-relational}
+Fix:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item an execution parameter set $T$,
+  \item an artifact universe $U$,
+  \item a context/envelope set $\Gamma$,
+  \item a valuation space $V$,
+  \item a decision space $2=\{0,1\}$,
+  \item a receipt space $R$,
+  \item (optionally) a capacity space $C$.
+\end{itemize}
+A kernel $K$ has \emph{relational execution semantics} given by a relation
+\[
+\Exec_K\ \subseteq\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times C\times \Gamma).
+\]
+We write
+\[
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma')
+\]
+iff $\big((t,u,\gamma),(u',v',d',r',c',\gamma')\big)\in \Exec_K$.
+\end{definition}
+
+\begin{remark}
+If the theory omits capacity $C$, simply drop the $c'$ coordinate and interpret
+\[
+\Exec_K\subseteq (T\times U\times\Gamma)\times (U\times V\times 2\times R\times \Gamma).
+\]
+\end{remark}
+
+\subsubsection{Deterministic semantics as a special case (normative)}
+
+\begin{definition}[Deterministic execution function]
+\label{def:exec-deterministic}
+A kernel $K$ is \emph{deterministic} (in this semantics) if $\Exec_K$ is single-valued in the output
+for each input. In that case, there exists a partial function
+\[
+\exec_K:\ T\times U\times \Gamma \rightharpoonup U\times V\times 2\times R\times C\times \Gamma
+\]
+such that
+\[
+\exec_K(t,u,\gamma)=(u',v',d',r',c',\gamma')
+\quad\Longleftrightarrow\quad
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma').
+\]
+\end{definition}
+
+\begin{remark}
+Relational semantics is the canonical model class because it accommodates nondeterminism
+(witness choice, admissible decompositions, underspecified joins) while remaining purely mathematical.
+Determinism is recovered as a property, not assumed.
+\end{remark}
+
+\subsubsection{Trace extraction (normative)}
+
+\begin{definition}[Trace induced by relational semantics]
+\label{def:trace-induced}
+Given a relation $\Exec_K$ as in Definition~\ref{def:exec-relational}, define the induced trace set
+(as an instance of the trace type $T^\star$):
+\[
+\widetilde{\Exec}_K\ :=\
+\big\{\, (t,u,\gamma;\ u',v',d',r',c',\gamma')\ :\ ((t,u,\gamma),(u',v',d',r',c',\gamma'))\in \Exec_K\,\big\}.
+\]
+\end{definition}
+
+\begin{remark}
+This makes explicit that the earlier ``kernel has traces'' view (Chapter~3) is recovered from
+the relational model by packaging input-output tuples into trace witnesses.
+\end{remark}
+
+\subsubsection{The model axiom: compositional semantics (normative)}
+
+Let $\mathfrak{P}$ be a process algebra instance with sequential operator $\seqc$ and sequential kit
+$(\Compat_{\seq},\Compose_{\seq})$ (Definition~\ref{def:composition-kit}).
+We now state the canonical \emph{model axiom} that makes the algebra semantic.
+
+\begin{axiom}[M0: Sequential semantics is relational composition via the kit]
+\label{ax:M0-seq}
+For all kernels $K_1,K_2\in\mathcal{K}$ and all inputs $(t,u,\gamma)\in T\times U\times \Gamma$,
+\[
+(t,u,\gamma)\xRightarrow{K_2\seqc K_1}(u_2,v_{21},d_{21},r_{21},c_{21},\gamma_2)
+\]
+iff there exist intermediate outputs $(u_1,v_1,d_1,r_1,c_1,\gamma_1)$ and stage outputs
+$(u_2,v_2,d_2,r_2,c_2,\gamma_2)$ such that:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $(t,u,\gamma)\xRightarrow{K_1}(u_1,v_1,d_1,r_1,c_1,\gamma_1)$,
+  \item $(t,u_1,\gamma_1)\xRightarrow{K_2}(u_2,v_2,d_2,r_2,c_2,\gamma_2)$,
+  \item letting
+  \[
+  \tau_1=(t,u,\gamma;\ u_1,v_1,d_1,r_1,c_1,\gamma_1),\qquad
+  \tau_2=(t,u_1,\gamma_1;\ u_2,v_2,d_2,r_2,c_2,\gamma_2),
+  \]
+  we have $\Compat_{\seq}(\tau_1,\tau_2)$,
+  \item and the composite output components $(v_{21},d_{21},r_{21},c_{21})$ are exactly those prescribed by the constructor
+  \[
+  \tau_{21} := \Compose_{\seq}(\tau_1,\tau_2)\in T^\star.
+  \]
+\end{enumerate}
+Equivalently: the semantics of $K_2\seqc K_1$ is the relational composition of $\Exec_{K_1}$ and $\Exec_{K_2}$
+\emph{factored through} the declared trace constructor.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:M0-seq} is the semantic counterpart of the ``compositional generation'' assumption used in
+conformance preservation (Chapter~6). Once M0 is adopted, those preservation theorems become theorems
+about the model class rather than extra assumptions.
+\end{remark}
+
+\begin{axiom}[M1: Parallel semantics via the kit (optional)]
+\label{ax:M1-par}
+If $\parc$ and a parallel kit $(\Compat_{\par},\Compose_{\par})$ are present, then $\Exec_{K_1\parc K_2}$
+is defined by the analogous relational product/join construction using $\Compose_{\par}$.
+\end{axiom}

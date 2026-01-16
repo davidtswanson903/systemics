@@ -1,5 +1,240 @@
 % book/chapters/ch13-capacity-enrichment.tex
 
-\subsection{Chapter 13. Capacity Enrichment}
+\subsection{Chapter 13. Capacity Enrichment (normative)}
+\label{sec:partV-ch13}
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\paragraph{Goal.} Treat resources as first-class and compose feasibility.
+
+\subsubsection{Capacity space and cost semantics (normative)}
+
+\begin{definition}[Capacity space]
+\label{def:cap-space}
+A \emph{capacity space} is a poset $(C,\preceq)$ with least element $0_C$.
+We interpret $c_1\preceq c_2$ as ``$c_2$ admits at least as much resource as $c_1$'' \emph{or}
+``$c_1$ uses no more resource than $c_2$,'' depending on the adopted convention.
+\end{definition}
+
+\begin{remark}
+This chapter adopts the \emph{usage} convention: smaller is better.
+A capacity bound is written $C_{\max}\in C$, and an execution is feasible when $\Cost(\tau)\preceq C_{\max}$.
+If you prefer the \emph{available budget} convention, reverse the inequalities systematically.
+\end{remark}
+
+\begin{definition}[Cost functional]
+\label{def:cost}
+A \emph{cost functional} is a map
+\[
+\Cost:\ T^\star \to C,
+\]
+assigning a capacity value (resource usage) to each trace.
+\end{definition}
+
+\begin{axiom}[Cost-field agreement (optional)]
+\label{ax:cost-field}
+If traces carry a distinguished capacity component $c(\tau)\in C$, then
+\[
+\Cost(\tau)=c(\tau)\qquad\text{for all }\tau\in T^\star.
+\]
+\end{axiom}
+
+\subsubsection{Capacity-bounded execution (normative)}
+
+\begin{definition}[Capacity-bounded trace set]
+\label{def:exec-bounded}
+For a kernel $K$ and bound $C_{\max}\in C$, define the capacity-bounded execution trace set:
+\[
+\Exec^{\le C_{\max}}_K \ :=\ \{\ \tau\in \Exec^\star_K\ :\ \Cost(\tau)\preceq C_{\max}\ \}.
+\]
+\end{definition}
+
+\begin{definition}[Capacity-bounded conformance]
+\label{def:cap-bounded-conf}
+A kernel $K$ \emph{conforms to a contract $\mathcal{C}$ under bound $C_{\max}$} if
+\[
+\Exec^{\le C_{\max}}_K \subseteq \mathcal{C}.
+\]
+\end{definition}
+
+\begin{remark}
+This is the disciplined form of ``the guarantee holds when we stay within resource budget.''
+\end{remark}
+
+\subsubsection{Targets, achievement, and feasibility regions (normative)}
+
+\begin{definition}[Target space]
+\label{def:target-space}
+Let $\mathcal{T}$ be a \emph{target space}. Minimally, $\mathcal{T}$ contains floor settings and (if Chapter~12 is adopted) stability budgets.
+A canonical choice is:
+\[
+\mathcal{T} := \ThetaSpace \times \BetaSpace,
+\]
+where $\ThetaSpace$ is a poset of floors and $\BetaSpace$ is a poset of invariance budgets.
+\end{definition}
+
+\begin{definition}[Achievement predicate]
+\label{def:achieve}
+Fix $K$ and envelope $\gamma\in \Gamma$. An \emph{achievement predicate} is a map
+\[
+\Ach_{K,\gamma}:\ \mathcal{T}\times C \to 2,
+\]
+where $\Ach_{K,\gamma}(t,C_{\max})=1$ means:
+``under capacity bound $C_{\max}$, the kernel achieves target $t$ in envelope $\gamma$.''
+
+Achievement is defined by a declared contract family; e.g.\ for $t=(\Theta,\beta)$:
+\[
+\Ach_{K,\gamma}((\Theta,\beta),C_{\max})=1
+\quad\Longleftrightarrow\quad
+\Exec^{\le C_{\max}}_K \subseteq \mathcal{C}_{\Theta,\gamma}\ \cap\ \mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta),
+\]
+where $\mathcal{C}_{\Theta,\gamma}$ is the floor contract family (instance-declared) and $\mathcal{C}_{\mathrm{stab}}$ is from Chapter~12 (when present).
+\end{definition}
+
+\begin{definition}[Feasibility region]
+\label{def:feas-region}
+Define the feasibility region at bound $C_{\max}$ as:
+\[
+\Feas(K,\gamma;C_{\max}) \ :=\ \{\ t\in\mathcal{T}\ :\ \Ach_{K,\gamma}(t,C_{\max})=1\ \}.
+\]
+\end{definition}
+
+\begin{axiom}[Capacity monotonicity of achievement]
+\label{ax:ach-mono-ch13}
+If $C_{\max}\preceq C_{\max}'$, then for all $t\in\mathcal{T}$,
+\[
+\Ach_{K,\gamma}(t,C_{\max})=1\ \Rightarrow\ \Ach_{K,\gamma}(t,C_{\max}')=1.
+\]
+\end{axiom}
+
+\begin{corollary}[Feasibility regions are upward-closed in capacity]
+\label{cor:feas-upward}
+If $C_{\max}\preceq C_{\max}'$, then
+\[
+\Feas(K,\gamma;C_{\max}) \subseteq \Feas(K,\gamma;C_{\max}').
+\]
+\end{corollary}
+
+\begin{proof}
+Immediate from Axiom~\ref{ax:ach-mono-ch13}.
+\end{proof}
+
+\subsubsection{Propagation under composition (normative)}
+
+\begin{definition}[Capacity merge operator]
+\label{def:cap-merge}
+A \emph{capacity merge operator} is a binary operation
+\[
+\MergeC:\ C\times C \to C
+\]
+intended to model how costs accumulate under composition.
+\end{definition}
+
+\begin{axiom}[Capacity merge associativity (recommended)]
+\label{ax:cap-merge-assoc}
+For all $c_1,c_2,c_3\in C$,
+\[
+(c_3\MergeC c_2)\MergeC c_1 = c_3\MergeC (c_2\MergeC c_1).
+\]
+\end{axiom}
+
+\begin{axiom}[Capacity merge monotonicity (recommended)]
+\label{ax:cap-merge-mono}
+If $c_1\preceq c_1'$ and $c_2\preceq c_2'$, then
+\[
+c_1\MergeC c_2 \preceq c_1'\MergeC c_2'.
+\]
+\end{axiom}
+
+\begin{axiom}[Sequential cost propagation (requires the composition kit)]
+\label{ax:cost-prop-seq}
+If $\tau_{21}$ is a sequentially composed trace built by the declared constructor kit from $\tau_1,\tau_2$
+(i.e.\ $\tau_{21}=\Compose_{\seq}(\tau_1,\tau_2)$), then
+\[
+\Cost(\tau_{21})=\Cost(\tau_2)\MergeC \Cost(\tau_1).
+\]
+\end{axiom}
+
+\begin{axiom}[Parallel cost propagation (optional)]
+\label{ax:cost-prop-par}
+If $\tau^\star$ is a parallelly composed trace built by the declared constructor kit from $\tau_1,\tau_2$
+(i.e.\ $\tau^\star=\Compose_{\par}(\tau_1,\tau_2)$), then
+\[
+\Cost(\tau^\star)=\Cost(\tau_1)\MergeC \Cost(\tau_2).
+\]
+\end{axiom}
+
+\begin{theorem}[Feasibility propagation for sequential composition (template)]
+\label{thm:feas-prop-seq}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the kernel composition $K_2\seqc K_1$ is defined by the constructor kit (Chapters~4--7),
+  \item sequential cost propagation (Axiom~\ref{ax:cost-prop-seq}) and monotonicity (Axiom~\ref{ax:cap-merge-mono}) hold,
+  \item there exists an instance-declared \emph{target splitting rule} $S:\mathcal{T}\to \mathcal{T}\times \mathcal{T}$, written
+        $S(t)=(t_1,t_2)$, such that achieving $t_1$ for stage $K_1$ and $t_2$ for stage $K_2$ implies achieving $t$ for the composite.
+\end{enumerate}
+If $t_1\in\Feas(K_1,\gamma;C_1)$ and $t_2\in\Feas(K_2,\gamma';C_2)$ under compatible envelopes
+(as required by the sequential compatibility predicate), then
+\[
+t\in \Feas(K_2\seqc K_1,\gamma;\ C_2\MergeC C_1).
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Combine the existence of composed traces (by the $\Sigma 2$-style constructor kit), the cost bound from Axiom~\ref{ax:cost-prop-seq},
+and the target-splitting implication that lifts stage achievement to composite achievement.
+\end{proof}
+
+\begin{remark}
+The only unavoidable instance-specific design choice is $S$ (how end-to-end targets decompose into per-stage targets).
+Everything else is structural.
+\end{remark}
+
+\subsubsection{Optional: Pareto frontiers (normative option)}
+
+\begin{definition}[Target preorder]
+\label{def:target-preorder}
+Assume $\mathcal{T}$ carries a preorder $\preceq_{\mathcal{T}}$ expressing ``no worse than.''
+For $\mathcal{T}=\ThetaSpace\times\BetaSpace$, a common choice is:
+\[
+(\Theta,\beta)\preceq_{\mathcal{T}}(\Theta',\beta')
+\quad\Longleftrightarrow\quad
+\Theta \preceq_\Theta \Theta' \ \wedge\ \beta \preceq_\beta \beta',
+\]
+with $\preceq_\Theta,\preceq_\beta$ declared by the instance (and their directions made explicit).
+\end{definition}
+
+\begin{definition}[Pareto set at capacity]
+\label{def:pareto}
+Define the Pareto set at bound $C_{\max}$:
+\[
+\Pareto(K,\gamma;C_{\max})
+:= \{\ t\in \Feas(K,\gamma;C_{\max})\ :\ \nexists t'\in \Feas(K,\gamma;C_{\max}) \text{ with } t\prec_{\mathcal{T}} t' \ \}.
+\]
+\end{definition}
+
+\begin{theorem}[Existence of Pareto optima (sufficient conditions)]
+\label{thm:pareto-exists-ch13}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $\Feas(K,\gamma;C_{\max})$ is nonempty,
+  \item $\mathcal{T}$ is finite, or $\mathcal{T}$ is compact and $\Feas(K,\gamma;C_{\max})$ is closed (under a declared topology),
+  \item the preorder $\preceq_{\mathcal{T}}$ is compatible with that structure (e.g.\ closed upper sets).
+\end{enumerate}
+Then $\Pareto(K,\gamma;C_{\max})$ is nonempty.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Standard maximal-element existence: in the finite case, choose a maximal element directly; in the compact/closed case, apply a maximality argument (e.g.\ via upper contour sets).
+\end{proof}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the capacity enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a capacity poset $(C,\preceq,0_C)$ and a cost functional $\Cost:T^\star\to C$,
+  \item the bounded execution trace set $\Exec^{\le C_{\max}}_K$,
+  \item a target space $\mathcal{T}$ and achievement predicate $\Ach_{K,\gamma}$, hence feasibility regions $\Feas(K,\gamma;C_{\max})$,
+  \item monotonicity of achievement in capacity (Axiom~\ref{ax:ach-mono-ch13}) or an explicit alternative law,
+  \item a capacity merge operator $\MergeC$ and (recommended) associativity/monotonicity laws,
+  \item propagation axioms (Axiom~\ref{ax:cost-prop-seq}; parallel optional) aligned with the composition kit,
+  \item (optional) Pareto notions and sufficient conditions for existence.
+\end{enumerate}

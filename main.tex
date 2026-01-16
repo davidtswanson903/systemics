@@ -1,57 +1,9 @@
-\documentclass[11pt]{article}
+% main.tex (root stub)
+% This file delegates to the modular book structure.
+% For the complete source, see book/main.tex and book/chapters/*.tex
 
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage{hyperref}
-\usepackage{enumitem}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{mathtools}
+\input{book/main.tex}
 
-\title{Systemics (Scratch Rebuild Sketch):\\
-A Single Coherent Treatise from Core Axioms to an Algebra of Processes}
-\author{}
-\date{}
-
-% --- theorem environments ---
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[section]
-\newtheorem{axiom}[definition]{Axiom}
-
-\theoremstyle{plain}
-\newtheorem{theorem}[definition]{Theorem}
-\newtheorem{lemma}[definition]{Lemma}
-\newtheorem{proposition}[definition]{Proposition}
-\newtheorem{corollary}[definition]{Corollary}
-
-\theoremstyle{remark}
-\newtheorem{remark}[definition]{Remark}
-
-% --- macros ---
-\newcommand{\Exec}{\mathrm{Exec}}
-\newcommand{\canon}{\mathrm{canon}}
-\newcommand{\cview}{\mathrm{cview}}
-\newcommand{\Norm}{\mathrm{Norm}}
-\newcommand{\NF}{\mathrm{NF}}
-\newcommand{\Verify}{\mathrm{Verify}}
-\newcommand{\Replay}{\mathrm{Replay}}
-\newcommand{\Wob}{\mathrm{wob}}
-\newcommand{\Cost}{\mathrm{Cost}}
-
-\newcommand{\seqc}{\circ}
-\newcommand{\parc}{\otimes}
-\newcommand{\MergeR}{\oplus_R}
-\newcommand{\MergeC}{\oplus_C}
-
-\begin{document}
-\maketitle
-\tableofcontents
-
-% ============================================================
-\section{Meta: Charter, Method, and Reading Guide}
-\label{sec:meta}
-
-\subsection{Charter (normative)}
 
 \paragraph{What Systemics is.}
 Systemics is a \emph{mathematical field} whose central object is a \emph{process}:

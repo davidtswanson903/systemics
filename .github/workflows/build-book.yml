@@ -1,0 +1,35 @@
+name: Build LaTeX book
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Full TeX Live is large but reliable for arbitrary LaTeX projects.
+      - name: Set up TeX Live
+        uses: teatimeguest/setup-texlive-action@v3
+        with:
+          scheme: full
+
+      - name: Build PDF (book/main.tex)
+        working-directory: book
+        run: |
+          latexmk -pdf -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: systemics-book-pdf
+          path: book/main.pdf
+          if-no-files-found: error

@@ -1,4 +1,159 @@
-% book/chapters/ch09-observables-equivalence.tex
+\section{Chapter 9. Observables and Induced Equivalence (normative)}
+\label{sec:partIII-ch9}
+
+\paragraph{Goal.} Define \emph{what counts as the same process} for refactoring.
+
+\subsubsection{Observable carrier and view map (normative)}
+
+\begin{definition}[Observable carrier]
+\label{def:obs-carrier-ch9}
+An \emph{observable carrier} is a set $\mathcal{O}$ whose elements represent the externally relevant view of traces.
+\end{definition}
+
+\begin{definition}[Observable view map]
+\label{def:cview}
+An \emph{observable view map} is a function
+\[
+\cview:\ T^\star \to \mathcal{O}.
+\]
+\end{definition}
+
+\begin{remark}
+$\cview$ is the formal ``information boundary.'' It specifies what is visible to equivalence.
+For example, $\cview$ may:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item forget raw receipts and retain only canonical digests,
+  \item forget intermediate states and retain only input/output summaries,
+  \item include envelope binding fields but omit non-binding fields.
+\end{itemize}
+All such choices are mathematical and instance-declared.
+\end{remark}
+
+\subsubsection{Trace equivalence induced by observables (normative)}
+
+\begin{definition}[Trace observational equivalence]
+\label{def:trace-eq}
+For traces $\tau,\tilde{\tau}\in T^\star$, define
+\[
+\tau \approx \tilde{\tau}
+\quad:\Longleftrightarrow\quad
+\cview(\tau)=\cview(\tilde{\tau}).
+\]
+\end{definition}
+
+\begin{lemma}[$\approx$ is an equivalence relation]
+\label{lem:trace-eq-rel}
+The relation $\approx$ is reflexive, symmetric, and transitive.
+\end{lemma}
+
+\begin{proof}
+Immediate from the fact that $=$ on $\mathcal{O}$ is an equivalence relation and $\approx$ is defined as equality of images under $\cview$.
+\end{proof}
+
+\subsubsection{Kernel equivalence induced by trace matching (normative)}
+
+Recall that in the relational model class (Chapter~7), for each kernel $K$ the semantics $\Exec_K$ induces a set of traces
+$\widetilde{\Exec}_K\subseteq T^\star$ (Definition~\ref{def:trace-induced}).
+For notational convenience, write
+\[
+\Exec^\star_K := \widetilde{\Exec}_K.
+\]
+
+\begin{definition}[Kernel observational equivalence induced by $\approx$]
+\label{def:kernel-eq}
+Two kernels $K$ and $K'$ are \emph{observationally equivalent} (written $K\simeq K'$) if for all execution inputs $(t,u,\gamma)$:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item for every trace $\tau\in \Exec^\star_K$ with $\mathrm{in}(\tau)=(t,u,\gamma)$, there exists a trace
+        $\tilde{\tau}\in \Exec^\star_{K'}$ with $\mathrm{in}(\tilde{\tau})=(t,u,\gamma)$ such that $\tau\approx \tilde{\tau}$;
+  \item conversely, for every trace $\tilde{\tau}\in \Exec^\star_{K'}$ with input $(t,u,\gamma)$, there exists
+        $\tau\in \Exec^\star_K$ with the same input such that $\tau\approx \tilde{\tau}$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:kernel-eq} is a bisimulation-style equivalence on \emph{sets of observable traces}.
+If kernels are deterministic, then for each input there is (at most) one trace, and $K\simeq K'$ reduces to equality of observable views for that trace.
+\end{remark}
+
+\subsubsection{$\simeq$ is an equivalence relation (normative)}
+
+\begin{theorem}[$\simeq$ is an equivalence relation]
+\label{thm:kernel-eq-rel}
+The relation $\simeq$ is reflexive, symmetric, and transitive.
+\end{theorem}
+
+\begin{proof}
+Reflexive: for any $K$, match each trace to itself; since $\approx$ is reflexive (Lemma~\ref{lem:trace-eq-rel}), the witness exists.
+Symmetric: the definition is symmetric by swapping $K$ and $K'$.
+Transitive: assume $K\simeq K'$ and $K'\simeq K''$. Fix an input $(t,u,\gamma)$ and a trace $\tau$ of $K$ at that input.
+By $K\simeq K'$, there exists $\tau'$ of $K'$ at the same input with $\tau\approx \tau'$.
+By $K'\simeq K''$, there exists $\tau''$ of $K''$ at the same input with $\tau'\approx \tau''$.
+By transitivity of $\approx$ (Lemma~\ref{lem:trace-eq-rel}), $\tau\approx \tau''$. The reverse direction is analogous.
+\end{proof}
+
+\subsubsection{Compositional observables and congruence (normative)}
+
+To ensure refactoring is stable under composition, we require that observables respect the composition kit.
+
+\begin{definition}[Compositional observable view (sequential)]
+\label{def:obs-compositional}
+The observable view $\cview$ is \emph{sequentially compositional} if there exists a (partial) operator
+\[
+\odot_{\seq}:\ \mathcal{O}\times \mathcal{O} \rightharpoonup \mathcal{O}
+\]
+such that whenever $\Compat_{\seq}(\tau_1,\tau_2)$ holds and $\tau_{21}=\Compose_{\seq}(\tau_1,\tau_2)$ is defined,
+we have
+\[
+\cview(\tau_{21}) \ =\ \cview(\tau_2)\ \odot_{\seq}\ \cview(\tau_1).
+\]
+\end{definition}
+
+\begin{remark}
+This is the formal statement of ``observables compose by the same recipe.'' In many instances,
+$\odot_{\seq}$ is induced by canonicalization and merge on the observed components (e.g.\ receipt digests, capacity witnesses, envelope bindings).
+\end{remark}
+
+\begin{theorem}[Congruence of $\simeq$ for $\seqc$ under compositional observables]
+\label{thm:congruence-seq}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the model axiom M0 holds (Axiom~\ref{ax:M0-seq}),
+  \item the observable view is sequentially compositional (Definition~\ref{def:obs-compositional}).
+\end{enumerate}
+Then $\simeq$ is a congruence for sequential composition:
+\[
+K_1\simeq K_1'\ \wedge\ K_2\simeq K_2'
+\quad\Rightarrow\quad
+K_2\seqc K_1 \ \simeq\ K_2'\seqc K_1'.
+\]
+\end{theorem}
+
+\begin{proof}
+Fix an input $(t,u,\gamma)$ and let $\tau$ be any trace of $K_2\seqc K_1$ at that input.
+By M0 (Axiom~\ref{ax:M0-seq}), $\tau=\Compose_{\seq}(\tau_1,\tau_2)$ for some compatible stage traces
+$\tau_1$ of $K_1$ (at $(t,u,\gamma)$) and $\tau_2$ of $K_2$ (at $(t,u_1,\gamma_1)$ as dictated by $\tau_1$),
+with $\Compat_{\seq}(\tau_1,\tau_2)$.
+
+Because $K_1\simeq K_1'$, there exists a trace $\tilde{\tau}_1$ of $K_1'$ matching $\tau_1$ up to $\approx$.
+Because $K_2\simeq K_2'$, there exists a trace $\tilde{\tau}_2$ of $K_2'$ matching $\tau_2$ up to $\approx$.
+(Here the inputs match as required because $\approx$ equates observable inputs, and the kit-defined compatibility uses declared interface fields.)
+
+Form the composed trace $\tilde{\tau} := \Compose_{\seq}(\tilde{\tau}_1,\tilde{\tau}_2)$ for $K_2'\seqc K_1'$.
+By compositionality of $\cview$ (Definition~\ref{def:obs-compositional}),
+\[
+\cview(\tau) = \cview(\tau_2)\odot_{\seq}\cview(\tau_1)
+\quad\text{and}\quad
+\cview(\tilde{\tau}) = \cview(\tilde{\tau}_2)\odot_{\seq}\cview(\tilde{\tau}_1).
+\]
+Since $\tau_1\approx \tilde{\tau}_1$ and $\tau_2\approx \tilde{\tau}_2$, we have
+$\cview(\tau_1)=\cview(\tilde{\tau}_1)$ and $\cview(\tau_2)=\cview(\tilde{\tau}_2)$, hence $\cview(\tau)=\cview(\tilde{\tau})$,
+i.e.\ $\tau\approx \tilde{\tau}$. The reverse direction is symmetric. Therefore $K_2\seqc K_1 \simeq K_2'\seqc K_1'$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:congruence-seq} is the precise bridge from semantics to the algebraic law L1 (Chapter~5):
+it shows congruence is not merely postulated but can be derived from the relational model axiom plus compositional observables.
+\end{remark}k/chapters/ch09-observables-equivalence.tex
 
 \subsection{Chapter 9. Observables and Induced Equivalence}
 

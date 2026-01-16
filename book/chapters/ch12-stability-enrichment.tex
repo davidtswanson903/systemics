@@ -1,5 +1,161 @@
 % book/chapters/ch12-stability-enrichment.tex
 
-\subsection{Chapter 12. Stability Enrichment}
+\subsection{Chapter 12. Stability Enrichment (normative)}
+\label{sec:partV-ch12}
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\paragraph{Goal.} Enrich the core process algebra with a rigorous robustness layer: probes, wobble, and invariance budgets.
+This chapter adds \emph{stability structure} as additional data and laws, never as hidden assumptions.
+
+\subsubsection{Probe structure (normative)}
+
+\begin{definition}[Probe family]
+\label{def:probe-family}
+A \emph{probe} is a function $p:U\to U$. A \emph{probe family} is a designated set
+\[
+\Probe_U \subseteq U^U.
+\]
+\end{definition}
+
+\begin{axiom}[P0: Identity probe]
+\label{ax:P0-probe-id}
+$\mathrm{id}_U\in \Probe_U$.
+\end{axiom}
+
+\begin{axiom}[P1: Closure under composition (optional)]
+\label{ax:P1-probe-comp}
+If $p,q\in \Probe_U$, then $p\circ q\in \Probe_U$.
+\end{axiom}
+
+\begin{remark}
+Envelope-aware probes may be adopted by replacing $p:U\to U$ with $p:U\times \Gamma \to U$ (or $p:T\times U\times\Gamma\to U$),
+but artifact-level probes are the minimal portable choice.
+\end{remark}
+
+\subsubsection{Wobble space and wobble map (normative)}
+
+\begin{definition}[Wobble space]
+\label{def:wobble-space}
+A \emph{wobble space} is a poset $(W,\preceq)$ with a least element $0_W$.
+Elements of $W$ are \emph{wobble magnitudes}.
+\end{definition}
+
+\begin{definition}[Wobble map (valuation-level)]
+\label{def:wobble-map}
+A \emph{wobble map} is a function
+\[
+\Wob:\ V\times V \to W.
+\]
+(Optionally, one may instead define $\Wob$ on observables $\mathcal{O}\times\mathcal{O}$; the choice must be declared.)
+\end{definition}
+
+\begin{definition}[Invariance budget]
+\label{def:beta}
+An \emph{invariance budget} is an element $\beta\in W$.
+We write $v\sim_\beta v'$ to mean $\Wob(v,v')\preceq \beta$.
+\end{definition}
+
+\begin{remark}
+This chapter treats $\beta$ as a parameter of robustness claims. Later chapters may relate $\beta$ to capacity (Chapter~13) or evidence (Chapter~14).
+\end{remark}
+
+\subsubsection{Stability judgments (normative)}
+
+\begin{definition}[Trace valuation/decision projections]
+\label{def:trace-proj-stab}
+For a trace $\tau=(t,u,\gamma;u',v,d,r,c,\gamma')\in T^\star$, define
+\[
+\Val(\tau):=v,\qquad \Dec(\tau):=d,
+\]
+and let $\In(\tau):=(t,u,\gamma)$ denote its input triple.
+\end{definition}
+
+\begin{definition}[Decision stability at an input]
+\label{def:stab-at-input}
+Fix a kernel $K$, an input $(t,u,\gamma)$, a probe family $\Probe_U$, and a budget $\beta\in W$.
+We say \emph{$K$ is decision-stable at $(t,u,\gamma)$ under $(\Probe_U,\beta)$} if:
+\[
+\forall p\in \Probe_U,\
+\forall \tau\in \Exec^\star_K\ \forall \tau_p\in \Exec^\star_K:
+\Big(\In(\tau)=(t,u,\gamma)\ \wedge\ \In(\tau_p)=(t,p(u),\gamma)\Big)
+\Rightarrow
+\Big(\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta\ \Rightarrow\ \Dec(\tau)=\Dec(\tau_p)\Big).
+\]
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:stab-at-input} is robust to nondeterminism by quantifying over \emph{all} traces at each probed input.
+For deterministic semantics, each quantification ranges over at most one trace.
+\end{remark}
+
+\subsubsection{Gate regularity (minimal sufficient conditions) (normative option)}
+
+To obtain usable theorems, we isolate minimal regularity of the decision rule. This is optional but recommended.
+
+\begin{definition}[Margin regularity (optional)]
+\label{def:margin}
+A \emph{margin function} is a map
+\[
+m:\ V\times \ThetaSpace \to W
+\]
+such that for all $v,v'\in V$ and all floors $\Theta\in\ThetaSpace$,
+\[
+\Wob(v,v') \prec m(v,\Theta)\ \Rightarrow\ \chi(v,\Theta,\beta)=\chi(v',\Theta,\beta),
+\]
+for the gate $\chi$ from the kernel contract (Part I) and any admissible $\beta$ (instance-declared).
+\end{definition}
+
+\begin{remark}
+This abstracts the standard ``classification margin'' idea: perturbations smaller than the margin cannot flip the decision.
+\end{remark}
+
+\subsubsection{Core theorem template (normative target)}
+
+\begin{theorem}[Stability bound via wobble budget (template)]
+\label{thm:stab-bound-template}
+Fix $K,\Theta,\gamma$ and assume a margin function $m$ exists (Definition~\ref{def:margin}).
+Let $(t,u,\gamma)$ be an input. Suppose that for some $\beta\in W$ and probe family $\Probe_U$:
+\[
+\forall p\in \Probe_U,\
+\forall \tau,\tau_p\in \Exec^\star_K:
+\Big(\In(\tau)=(t,u,\gamma)\ \wedge\ \In(\tau_p)=(t,p(u),\gamma)\Big)
+\Rightarrow
+\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta,
+\]
+and additionally $\beta \prec m(\Val(\tau),\Theta)$ for all relevant $\tau$ at $(t,u,\gamma)$.
+Then $K$ is decision-stable at $(t,u,\gamma)$ under $(\Probe_U,\beta)$ (Definition~\ref{def:stab-at-input}).
+\end{theorem}
+
+\begin{proof}
+Let $p\in\Probe_U$ and choose traces $\tau,\tau_p$ with the required inputs. By hypothesis,
+$\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta \prec m(\Val(\tau),\Theta)$.
+By margin regularity, the gate outcome cannot change between $\Val(\tau)$ and $\Val(\tau_p)$, hence
+$\Dec(\tau)=\Dec(\tau_p)$.
+\end{proof}
+
+\subsubsection{Stability as a contract (normative)}
+
+\begin{definition}[Stability contract]
+\label{def:stab-contract}
+Fix $(\Probe_U,\beta)$ and define the \emph{stability contract} $\mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)\subseteq T^\star$ by:
+\[
+\tau\in \mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)
+\quad:\Longleftrightarrow\quad
+\text{$K$ is decision-stable at $\In(\tau)$ under $(\Probe_U,\beta)$ in the sense of Definition~\ref{def:stab-at-input}.}
+\]
+\end{definition}
+
+\begin{remark}
+By Chapter~6, once stability is phrased as a contract, it becomes composable: you can require stability stage-wise or end-to-end,
+depending on how you choose to lift stability requirements through $\cseq$ (and $\cpar$).
+\end{remark}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the stability enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a probe family $\Probe_U$ and at least Axiom~\ref{ax:P0-probe-id},
+  \item a wobble space $(W,\preceq,0_W)$ and wobble map $\Wob$,
+  \item the meaning of budgets $\beta\in W$ and the stability judgment (Definition~\ref{def:stab-at-input}),
+  \item (recommended) a gate regularity notion (e.g.\ margin regularity) and the stability theorem template (Theorem~\ref{thm:stab-bound-template}),
+  \item the stability contract $\mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)$.
+\end{enumerate}

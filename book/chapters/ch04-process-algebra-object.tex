@@ -1,5 +1,128 @@
-% book/chapters/ch04-process-algebra-object.tex
+\section{Chapter 4. The Process Algebra Object (normative)}
+\label{sec:partII-ch4}
 
-\subsection{Chapter 4. Process Algebra Object}
+\paragraph{Goal.} Define what a \emph{Systemics process algebra instance} is.
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\subsubsection{Optional typed layer (normative)}
+
+\begin{definition}[Type carrier (optional)]
+\label{def:Ty}
+Optionally, let $\mathsf{Ty}$ be a set of \emph{types}.
+\end{definition}
+
+\begin{definition}[Typed kernel (optional)]
+\label{def:typed-kernel}
+If $\mathsf{Ty}$ is present, a kernel $K$ may be assigned a type (interface)
+\[
+K:A\to B \quad\text{with}\quad A,B\in \mathsf{Ty}.
+\]
+This typing is purely declarative at the core level; its operational meaning is induced by
+the declared compatibility predicate(s) and composition constructor(s) introduced below.
+\end{definition}
+
+\begin{remark}
+Typing is optional. When omitted, all kernels are treated as untyped elements of a class $\mathcal{K}$,
+and compatibility is expressed entirely at the trace level.
+\end{remark}
+
+\subsubsection{Signature of operators (normative)}
+
+\begin{definition}[Kernel carrier]
+\label{def:K-carrier}
+Let $\mathcal{K}$ be a class (or set) of kernels in the sense of Definition~\ref{def:kernel-primitive}.
+\end{definition}
+
+\begin{definition}[Sequential composition operator (signature)]
+\label{def:seq-signature}
+A \emph{sequential composition operator} is a binary operation on kernels
+\[
+\seqc:\mathcal{K}\times \mathcal{K}\to \mathcal{K},
+\]
+written $K_2\seqc K_1$.
+\end{definition}
+
+\begin{definition}[Parallel composition operator (optional signature)]
+\label{def:par-signature}
+Optionally, a \emph{parallel composition operator} is a binary operation
+\[
+\parc:\mathcal{K}\times \mathcal{K}\to \mathcal{K},
+\]
+written $K_1\parc K_2$.
+\end{definition}
+
+\begin{definition}[Identity kernel (optional signature)]
+\label{def:id-signature}
+Optionally, for each type $A\in\mathsf{Ty}$ (typed setting) or globally (untyped setting),
+there is a distinguished kernel $\mathrm{Id}$ (or $\mathrm{Id}_A$) intended as an identity for $\seqc$.
+\end{definition}
+
+\begin{remark}
+At this point these operators are just \emph{symbols with arities}. Their semantics is supplied
+by the composition kit below (via trace construction).
+\end{remark}
+
+\subsubsection{The composition kit (normative)}
+
+The core data that makes the operator symbols meaningful is a trace-level constructor kit.
+We package it explicitly.
+
+\begin{definition}[Composition kit]
+\label{def:composition-kit}
+A \emph{composition kit} is a tuple
+\[
+\mathfrak{K}_{\mathrm{kit}}=
+(\Compat_{\seq},\Compose_{\seq}\ ;\ \Compat_{\par},\Compose_{\par}\ ;\ \Compat_{\mathrm{Id}},\Compose_{\mathrm{Id}})
+\]
+consisting of:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item a sequential compatibility predicate $\Compat_{\seq}\subseteq T^\star\times T^\star$ and a partial constructor
+        $\Compose_{\seq}:T^\star\times T^\star \rightharpoonup T^\star$;
+  \item optionally, a parallel compatibility predicate $\Compat_{\par}$ and constructor $\Compose_{\par}$;
+  \item optionally, identity compatibility/constructor data $\Compat_{\mathrm{Id}}$ and $\Compose_{\mathrm{Id}}$,
+        sufficient to witness identity behavior at the trace level (e.g.\ by providing a canonical trace form).
+\end{itemize}
+Each declared constructor is required to satisfy the soundness schema (Axiom~\ref{ax:T0}) with its matching predicate.
+\end{definition}
+
+\begin{remark}
+The kit is where ``what it means to compose'' actually lives. All later composition theorems
+(conformance preservation, equivalence congruence, evidence closure) refer back to the kit.
+\end{remark}
+
+\subsubsection{Process algebra instance (key deliverable) (normative)}
+
+\begin{definition}[Systemics process algebra instance]
+\label{def:process-algebra-instance}
+A \emph{Systemics process algebra instance} is a tuple
+\[
+\mathfrak{P}=
+(\mathcal{K},\ \mathsf{Ty};\ \seqc,\ \parc,\ \mathrm{Id};\ \mathfrak{K}_{\mathrm{kit}})
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item $\mathcal{K}$ is a kernel carrier (Definition~\ref{def:K-carrier});
+  \item $\mathsf{Ty}$ is an optional type carrier (Definition~\ref{def:Ty});
+  \item $\seqc$ is a sequential operator (Definition~\ref{def:seq-signature});
+  \item $\parc$ is an optional parallel operator (Definition~\ref{def:par-signature});
+  \item $\mathrm{Id}$ is an optional identity kernel family (Definition~\ref{def:id-signature});
+  \item $\mathfrak{K}_{\mathrm{kit}}$ is a composition kit (Definition~\ref{def:composition-kit}).
+\end{itemize}
+Additionally, the instance must provide \emph{operator semantics} by specifying, for each declared operator,
+how the execution traces of the composite kernel are generated from component traces using the kit; minimally:
+
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Sequential semantics schema:} every trace of $K_2\seqc K_1$ is obtained by choosing
+        $\tau_1\in\Exec_{K_1}$ and $\tau_2\in\Exec_{K_2}$ with $\Compat_{\seq}(\tau_1,\tau_2)$ and setting
+        \[
+        \tau := \Compose_{\seq}(\tau_1,\tau_2)\in \Exec_{K_2\seqc K_1}.
+        \]
+  \item \textbf{Parallel semantics schema (if present):} analogously using $(\Compat_{\par},\Compose_{\par})$.
+  \item \textbf{Identity semantics schema (if present):} identity traces are witnessed by the declared identity kit.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:process-algebra-instance} is intentionally ``constructor-first'': it does not assume
+algebraic laws (associativity, identities, commutativity). Those become theorems or axioms in later parts
+(e.g.\ the equivalence and rewriting chapters) once observational equivalence is defined.
+\end{remark}

@@ -1,5 +1,123 @@
-% book/chapters/ch06-contract-algebra.tex
+\section{Chapter 6. Contract Algebra and Conformance Preservation (normative)}
+\label{sec:partII-ch6}
 
-\subsection{Chapter 6. Contract Algebra and Conformance Preservation}
+\paragraph{Goal.} Make ``guarantees compose'' a theorem, not a slogan.
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\subsubsection{Induced contract operators (normative)}
+
+Let $\mathfrak{P}$ be a process algebra instance (Definition~\ref{def:process-algebra-instance}) with
+a declared composition kit $\mathfrak{K}_{\mathrm{kit}}$ (Definition~\ref{def:composition-kit}).
+Write $(\Compat_{\seq},\Compose_{\seq})$ for the sequential kit and (optionally)
+$(\Compat_{\par},\Compose_{\par})$ for the parallel kit.
+
+\begin{definition}[Sequential contract composition]
+\label{def:cseq}
+For contracts $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$, define the \emph{sequential contract composition}
+operator $\cseq$ by:
+\[
+\mathcal{C}_2 \cseq \mathcal{C}_1
+\ :=\
+\big\{\, \Compose_{\seq}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\seq}(\tau_1,\tau_2)\,\big\},
+\]
+where $\Compose_{\seq}(\tau_1,\tau_2)$ is understood to be defined whenever $\Compat_{\seq}(\tau_1,\tau_2)$ holds
+(as required by the constructor soundness schema, Axiom~\ref{ax:T0}).
+\end{definition}
+
+\begin{definition}[Parallel contract composition (optional)]
+\label{def:cpar}
+If $(\Compat_{\par},\Compose_{\par})$ is present, define the \emph{parallel contract composition}
+operator $\cpar$ by:
+\[
+\mathcal{C}_1 \cpar \mathcal{C}_2
+\ :=\
+\big\{\, \Compose_{\par}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\par}(\tau_1,\tau_2)\,\big\}.
+\]
+\end{definition}
+
+\begin{remark}
+The contract operators are \emph{induced} by the same kit as kernel composition. This is the central design rule:
+\emph{the constructors that build composed traces are the constructors that build composed guarantees}.
+\end{remark}
+
+\subsubsection{Conformance preservation (normative)}
+
+\begin{theorem}[Sequential conformance preservation]
+\label{thm:seq-conformance-preservation}
+Let $K_1,K_2\in \mathcal{K}$ and let $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$ be contracts.
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $K_1 \models \mathcal{C}_1$,
+  \item $K_2 \models \mathcal{C}_2$,
+  \item (\emph{compositional generation}) every trace of $K_2\seqc K_1$ arises from composing
+        a compatible pair of traces from $K_1$ and $K_2$ via the sequential constructor, i.e.:
+        \[
+        \forall \tau\in \Exec_{K_2\seqc K_1}\ \exists \tau_1\in \Exec_{K_1},\ \tau_2\in \Exec_{K_2}:
+        \Compat_{\seq}(\tau_1,\tau_2)\ \wedge\ \tau=\Compose_{\seq}(\tau_1,\tau_2).
+        \]
+\end{enumerate}
+Then:
+\[
+K_2\seqc K_1 \models (\mathcal{C}_2 \cseq \mathcal{C}_1).
+\]
+\end{theorem}
+
+\begin{proof}
+Let $\tau\in \Exec_{K_2\seqc K_1}$. By assumption (3), there exist $\tau_1\in\Exec_{K_1}$ and
+$\tau_2\in\Exec_{K_2}$ such that $\Compat_{\seq}(\tau_1,\tau_2)$ and $\tau=\Compose_{\seq}(\tau_1,\tau_2)$.
+From $K_1\models \mathcal{C}_1$ we have $\tau_1\in \mathcal{C}_1$, and from $K_2\models \mathcal{C}_2$ we have
+$\tau_2\in \mathcal{C}_2$. Therefore, by Definition~\ref{def:cseq},
+\[
+\tau=\Compose_{\seq}(\tau_1,\tau_2)\in \mathcal{C}_2\cseq \mathcal{C}_1.
+\]
+Since $\tau$ was arbitrary, $\Exec_{K_2\seqc K_1}\subseteq (\mathcal{C}_2\cseq \mathcal{C}_1)$, i.e.\
+$K_2\seqc K_1 \models (\mathcal{C}_2\cseq \mathcal{C}_1)$.
+\end{proof}
+
+\begin{theorem}[Parallel conformance preservation (optional)]
+\label{thm:par-conformance-preservation}
+If $\parc$ and $(\Compat_{\par},\Compose_{\par})$ are present and satisfy the analogous
+compositional generation property for $K_1\parc K_2$, then:
+\[
+K_1\models \mathcal{C}_1\ \wedge\ K_2\models \mathcal{C}_2
+\quad\Rightarrow\quad
+K_1\parc K_2 \models (\mathcal{C}_1\cpar \mathcal{C}_2).
+\]
+\end{theorem}
+
+\begin{proof}
+Identical structure to Theorem~\ref{thm:seq-conformance-preservation}, replacing $\seqc,\Compat_{\seq},\Compose_{\seq},\cseq$
+by $\parc,\Compat_{\par},\Compose_{\par},\cpar$.
+\end{proof}
+
+\subsubsection{Merge-closed contracts and closure corollaries (normative)}
+
+\begin{definition}[Merge-closed contract (sequential)]
+\label{def:merge-closed}
+A contract $\mathcal{C}\subseteq T^\star$ is \emph{merge-closed for sequential composition} if
+for all $\tau_1,\tau_2\in \mathcal{C}$,
+\[
+\Compat_{\seq}(\tau_1,\tau_2)\ \Rightarrow\ \Compose_{\seq}(\tau_1,\tau_2)\in \mathcal{C}.
+\]
+Equivalently, $\mathcal{C}\cseq \mathcal{C}\subseteq \mathcal{C}$.
+\end{definition}
+
+\begin{corollary}[Closure under sequential composition]
+\label{cor:closure-seq}
+If $\mathcal{C}$ is merge-closed (Definition~\ref{def:merge-closed}) and
+$K_1\models \mathcal{C}$ and $K_2\models \mathcal{C}$, then:
+\[
+K_2\seqc K_1 \models \mathcal{C}.
+\]
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:seq-conformance-preservation}, we have
+$K_2\seqc K_1 \models (\mathcal{C}\cseq \mathcal{C})$.
+By merge-closure, $\mathcal{C}\cseq \mathcal{C}\subseteq \mathcal{C}$, hence
+$K_2\seqc K_1 \models \mathcal{C}$.
+\end{proof}
+
+\begin{remark}
+Merge-closed contracts are the mechanism by which ``global invariants'' arise: you state one contract $\mathcal{C}$
+and prove it is closed under your composition kit. Then any pipeline built from conforming stages conforms globally.
+\end{remark}

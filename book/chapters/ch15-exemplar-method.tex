@@ -1,5 +1,116 @@
 % book/chapters/ch15-exemplar-method.tex
 
-\subsection{Chapter 15. Exemplar Method}
+\subsection{Chapter 15. Exemplar Method (normative template)}
+\label{sec:exemplar-method}
 
-% Placeholder. (Source content currently lives under tex/chapters/.)
+\paragraph{Goal.} Define what counts as a canonical exemplar for the field.
+
+\subsubsection{Exemplar object (normative)}
+
+\begin{definition}[Canonical exemplar]
+\label{def:canonical-exemplar}
+A \emph{canonical exemplar} is a tuple
+\[
+\mathbb{E}=(\mathbb{U},\ \mathbb{K},\ \mathbb{A},\ \mathbb{O},\ \mathbb{X}),
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item $\mathbb{U}$ (\textbf{Universes}) instantiates the primitive carriers from Chapter~2:
+  \[
+  (U,V,2,\Gamma,R,T)\ \text{ and trace type }T^\star;
+  \]
+  optionally a capacity space $(C,\preceq)$.
+  \item $\mathbb{K}$ (\textbf{Kernel family}) specifies a nonempty set of kernels (atomic generators) together with their execution semantics $\Exec_K$ (Chapter~7),
+  and the associated trace fields (including receipts).
+  \item $\mathbb{A}$ (\textbf{Composition kit / process algebra instance}) instantiates Chapter~4:
+  \[
+  (\seqc,\parc,\mathrm{Id},\Compat,\Compose_{\seq},\Compose_{\par},\MergeR,\MergeC,\ldots),
+  \]
+  with any optional components explicitly marked as optional.
+  \item $\mathbb{O}$ (\textbf{Observables \& induced equivalence}) instantiates Chapter~9:
+  an observable view $\cview:T^\star\to\mathcal{O}$, trace equivalence $\approx$, and induced kernel equivalence $\simeq$ (with congruence conditions).
+  \item $\mathbb{X}$ (\textbf{Optional enrichments}) instantiates at least one enrichment chapter (Part~V), e.g.\
+  stability (Chapter~12), capacity (Chapter~13), or evidence (Chapter~14), with all required structures.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The tuple notation is only packaging: any exemplar is acceptable if it presents the same data unambiguously and checks the same obligations.
+\end{remark}
+
+\subsubsection{Exemplar obligations (normative)}
+
+\begin{definition}[Exemplar obligations]
+\label{def:exemplar-obligations}
+A candidate exemplar $\mathbb{E}$ is \emph{admissible} as canonical iff it satisfies all obligations below.
+
+\paragraph{(E0) Instantiation completeness.}
+$\mathbb{E}$ explicitly instantiates:
+\begin{enumerate}[leftmargin=*, itemsep=0.15em]
+  \item universes and trace schema (Chapter~2),
+  \item the process algebra instance / composition kit (Chapter~4),
+  \item observational interface ($\cview$, $\approx$, $\simeq$) (Chapter~9),
+  \item at least one enrichment package (Chapters~12--14).
+\end{enumerate}
+
+\paragraph{(E1) Conformance preservation demonstration.}
+$\mathbb{E}$ must include at least one explicit theorem instance of Chapter~6:
+there exist contracts $\mathcal{C}_1,\mathcal{C}_2$ and kernels $K_1,K_2$ such that:
+\[
+K_1\models\mathcal{C}_1,\quad K_2\models\mathcal{C}_2
+\quad\Rightarrow\quad
+K_2\seqc K_1 \models (\mathcal{C}_2\cseq \mathcal{C}_1),
+\]
+with all compatibility and constructor conditions checked in the instance.
+
+\paragraph{(E2) Equivalence/normalization demonstration.}
+$\mathbb{E}$ must exhibit at least one nontrivial refactoring proof using Chapter~11:
+there exist expressions $E,E'$ with
+\[
+E \RewriteStar E'
+\quad\text{and}\quad
+\llbracket E\rrbracket \simeq \llbracket E'\rrbracket,
+\]
+and either:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item an explicit normalization function $\Norm$ with soundness, or
+  \item an explicit normal-form predicate $\NF$ plus a proof that the chosen refactoring reaches $\NF$ and preserves $\simeq$.
+\end{itemize}
+
+\paragraph{(E3) Enrichment demonstration.}
+$\mathbb{E}$ must demonstrate at least one enrichment as an explicit theorem instance:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item \textbf{Stability:} a probe family and a wobble structure yielding a stated invariance result, or
+  \item \textbf{Capacity:} a feasibility region statement with propagation under $\MergeC$, or
+  \item \textbf{Evidence:} an evidence closure statement for merged receipts verifying composed claims.
+\end{itemize}
+
+\paragraph{(E4) Verifier-checkability (evidence interface).}
+If the exemplar uses receipts (it must, by Chapters~2 and~7), then it must specify a verifier interface
+at the level of Chapter~8/14 such that the exemplar's receipt claims are \emph{checkable}:
+either
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item a concrete verifier predicate $\Verify(r,\phi)$ is given, or
+  \item an abstract verifier is given with explicitly stated axioms sufficient to justify the exemplar's verification steps,
+        including canonical invariance and binding consistency.
+\end{itemize}
+In particular, if evidence enrichment (Chapter~14) is the chosen enrichment, the exemplar must satisfy merge-closed verification.
+
+\end{definition}
+
+\subsubsection{Canonical exemplar output format (normative)}
+
+\begin{definition}[Exemplar dossier]
+\label{def:exemplar-dossier}
+A canonical exemplar must be presented as an \emph{exemplar dossier} containing:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Instantiation page:} explicit definitions for $\mathbb{U}$, $\mathbb{K}$, $\mathbb{A}$, $\mathbb{O}$, and chosen $\mathbb{X}$.
+  \item \textbf{Obligation proofs:} proofs (or proof sketches labeled as such) satisfying (E1)--(E4) of Definition~\ref{def:exemplar-obligations}.
+  \item \textbf{Receipts/verifier note:} a statement of the receipt schema and verifier interface used, including binding fields and canonicalization.
+  \item \textbf{Refactoring exhibit:} at least one normalization/refactoring example with the $\simeq$ witness.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+The exemplar dossier is the field-level unit of pedagogy and validation: it is what can be cited, replayed abstractly, and compared across domains.
+\end{remark}
