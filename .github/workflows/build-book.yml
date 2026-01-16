@@ -16,11 +16,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Full TeX Live is large but reliable for arbitrary LaTeX projects.
-      - name: Set up TeX Live
-        uses: teatimeguest/setup-texlive-action@v3
-        with:
-          scheme: full
+      # Use a widely used action to install TeX Live via apt (fast + reliable).
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-bibtex-extra \
+            texlive-science \
+            texlive-pictures \
+            texlive-pstricks \
+            texlive-humanities
 
       - name: Build PDF (book/main.tex)
         working-directory: book
