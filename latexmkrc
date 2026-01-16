@@ -1,0 +1,5 @@
+# latexmkrc
+$out_dir = 'out';
+$pdf_mode = 1;
+$interaction = 'nonstopmode';
+$recorder = 1;

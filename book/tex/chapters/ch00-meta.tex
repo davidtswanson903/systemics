@@ -1,0 +1,156 @@
+% tex/chapters/ch00-meta.tex
+
+\subsection{Charter (normative)}
+
+\paragraph{What Systemics is.}
+Systemics is a \emph{mathematical field} whose central object is a \emph{process}:
+a transformation of structured artifacts performed under a declared envelope (regime),
+optionally emitting receipts (evidence) and consuming capacity (resources).
+Its goal is to provide an \emph{algebra of processes} in which:
+
+\begin{itemize}
+  \item processes can be composed into pipelines,
+  \item guarantees (contracts) compose predictably,
+  \item processes can be refactored by equational reasoning (rewrite to normal forms),
+  \item robustness (stability under probes) is stated and proven,
+  \item resource feasibility is treated as a first-class constraint,
+  \item executions are \emph{accountable} via proof-like receipts with independent verification.
+\end{itemize}
+
+\paragraph{What Systemics is not.}
+Systemics is not tied to software, a machine model, a programming language, a proof assistant,
+or a particular domain. It may be instantiated in those settings, but the field is defined
+at the level of abstract structures, relations, and theorems.
+
+\paragraph{Primary deliverable of the field.}
+A Systemics theory is a \emph{coherent package} of:
+\begin{enumerate}
+  \item a process algebra (operators and laws),
+  \item a semantics class (models) that interprets the algebra as behavior,
+  \item contract and evidence layers that make claims compositional and checkable.
+\end{enumerate}
+
+\subsection{Method: From Core to Enrichments (normative)}
+
+\paragraph{Core-first discipline.}
+This treatise is written bottom-up. Each chapter:
+\begin{itemize}
+  \item declares its dependencies (which previous definitions/axioms it uses),
+  \item introduces no hidden structure,
+  \item provides either a theorem or an axiom explicitly.
+\end{itemize}
+
+\paragraph{Two-layer development.}
+We distinguish:
+\begin{itemize}
+  \item \textbf{Core structure:} the minimal objects and laws needed to speak about processes algebraically.
+  \item \textbf{Enrichments:} additional structures (stability, capacity, evidence) that attach to the core and remain compositional.
+\end{itemize}
+
+\paragraph{Normative vs.\ informative.}
+\begin{itemize}
+  \item \textbf{Normative} text defines the field: it contains required definitions, axioms, and theorem targets.
+  \item \textbf{Informative} text provides intuition, examples, and optional strengthenings.
+\end{itemize}
+
+\subsection{Guiding Principles (normative)}
+
+\begin{axiom}[Receipts are witnesses]
+A receipt is treated as a mathematical witness object. It may be checked independently of the process that emitted it.
+\end{axiom}
+
+\begin{axiom}[Contracts are trace-sets]
+A contract is a set (predicate) of admissible traces, and conformance is subset inclusion.
+\end{axiom}
+
+\begin{axiom}[Composition alignment]
+Whenever a composition operator is introduced on processes, a matching operator must be introduced on contracts and (when present) on receipts/capacities, using the same constructor kit.
+\end{axiom}
+
+\begin{remark}
+This ``alignment'' principle is the reason Systemics can be both algebraic (equational)
+and accountable (proof-relevant): the same constructors drive behavior, guarantees, and evidence.
+\end{remark}
+
+\subsection{Reading Guide (informative)}
+
+\paragraph{Three readings of the same material.}
+This document can be read in three coherent ways:
+
+\begin{enumerate}
+  \item \textbf{Algebra reading (process calculus).}
+  Focus on operators, laws, equivalence, rewriting, and normal forms. This is the ``algebra of processes'' track.
+
+  \item \textbf{Semantics reading (models).}
+  Focus on execution relations, replay/verification skeletons, and observable views. This is the ``what it means'' track.
+
+  \item \textbf{Accountability reading (evidence + constraints).}
+  Focus on stability, capacity feasibility, and receipts-as-proofs with closure under composition.
+  This is the ``guarantees you can check'' track.
+\end{enumerate}
+
+\paragraph{Minimal path (first pass).}
+A recommended minimal first pass is:
+\begin{itemize}
+  \item Core objects and contracts (Parts I--II),
+  \item execution semantics and observational equivalence (Part III),
+  \item conformance preservation theorem (Part II),
+  \item evidence closure (Part V).
+\end{itemize}
+
+\paragraph{Second pass (calculus maturity).}
+Add rewriting + normal forms (Part IV), then stability and capacity (Part V), then exemplars (Part VI).
+
+\subsection{What counts as a Systemics Theory? (normative)}
+
+\begin{definition}[Systemics theory]
+A \emph{Systemics theory} $\mathcal{S}$ is a tuple
+\[
+\mathcal{S}=(\mathfrak{P},\mathfrak{M},\mathfrak{Con},\mathfrak{Ev},\mathfrak{Ext})
+\]
+where:
+\begin{itemize}
+  \item $\mathfrak{P}$ is a process algebra instance (kernels + operators + laws, up to equivalence),
+  \item $\mathfrak{M}$ is a class of models (semantics) interpreting processes as executions/traces,
+  \item $\mathfrak{Con}$ is a contract algebra aligned with $\mathfrak{P}$ and preserved by composition,
+  \item $\mathfrak{Ev}$ is an evidence layer (receipts + verifier) with closure under composition,
+  \item $\mathfrak{Ext}$ is an (optional) set of enrichments (stability, capacity, morphisms) that remain aligned.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Different Systemics theories share the same \emph{shape} but differ in what they take as primitives:
+what $U$ is, what receipts look like, how observables are chosen, what stability probes mean, and how capacity is ordered.
+\end{remark}
+
+\subsection{Compatibility with Existing Drafts (informative)}
+
+The prior $\Sigma 1$--$\Sigma 6$ drafts correspond to chapters as follows:
+\begin{itemize}
+  \item $\Sigma 1$ $\to$ execution/receipts/replay skeleton (Part III),
+  \item $\Sigma 2$ $\to$ composition + conformance preservation (Part II),
+  \item $\Sigma 3$ $\to$ equivalence + rewriting + normal forms (Parts III--IV),
+  \item $\Sigma 4$ $\to$ stability enrichment (Part V),
+  \item $\Sigma 5$ $\to$ capacity enrichment (Part V),
+  \item $\Sigma 6$ $\to$ evidence layer (Part V).
+\end{itemize}
+
+\subsection{Field Boundary and Ambition (informative)}
+
+Systemics aims to be ``foundational'' in the same sense that:
+\begin{itemize}
+  \item algebra abstracts arithmetic and structure-preserving transformation,
+  \item category theory abstracts compositional structure,
+  \item logic abstracts derivability and proof,
+\end{itemize}
+but it is centered on \emph{process} (transformation under constraints) with explicit accountability objects (receipts)
+and explicit robustness/resource structure (budgets/capacity).
+
+\paragraph{Pragmatic criterion.}
+Systemics becomes a field (not a vocabulary) when:
+\begin{itemize}
+  \item multiple nontrivial theorems are reusable across domains,
+  \item exemplars instantiate the same axioms/laws with minimal ad hoc additions,
+  \item normal forms enable real refactorability,
+  \item verification closure makes evidence compositional and checkable.
+\end{itemize}

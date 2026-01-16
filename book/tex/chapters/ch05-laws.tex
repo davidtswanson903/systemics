@@ -1,0 +1,130 @@
+% tex/chapters/ch05-laws.tex
+
+\subsection{Chapter 5. Laws of Composition (normative)}
+\label{sec:partI-ch5}
+
+\paragraph{Goal.} The minimal equational basis for ``algebra of processes.''
+
+\subsubsection{Equivalence and its status (normative)}
+
+\begin{definition}[Kernel equivalence placeholder]
+\label{def:eq-placeholder}
+Fix a binary relation $\simeq\ \subseteq\ \mathcal{K}\times \mathcal{K}$ called \emph{kernel equivalence}.
+In this chapter, $\simeq$ is treated as a \emph{primitive judgment} whose induction principle is deferred.
+Later chapters either:
+\begin{itemize}
+  \item \emph{derive} $\simeq$ from an observable semantics (e.g.\ trace views), or
+  \item \emph{adopt} $\simeq$ axiomatically as part of the algebraic presentation.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+This is the standard algebraic move: we may state the equational theory at the process-algebra level,
+and later justify it by semantics (soundness/completeness), or treat it as an axiomatic algebra
+whose models are semantics structures satisfying the laws.
+\end{remark}
+
+\subsubsection{Congruence laws (normative)}
+
+\begin{definition}[Congruence for an operator]
+\label{def:congruence}
+Let $\odot$ be a binary operator on $\mathcal{K}$. The relation $\simeq$ is a \emph{congruence} for $\odot$ if
+\[
+K_1\simeq K_1' \ \wedge\ K_2\simeq K_2' \quad \Rightarrow \quad (K_2\odot K_1)\simeq (K_2'\odot K_1').
+\]
+\end{definition}
+
+\begin{axiom}[L1: Congruence for sequential composition]
+\label{ax:L1-cong-seq}
+$\simeq$ is a congruence for $\seqc$ (Definition~\ref{def:congruence}).
+\end{axiom}
+
+\begin{axiom}[L2: Congruence for parallel composition (optional)]
+\label{ax:L2-cong-par}
+If $\parc$ is present, then $\simeq$ is a congruence for $\parc$.
+\end{axiom}
+
+\subsubsection{Associativity and identities up to equivalence (normative)}
+
+\begin{axiom}[L3: Associativity of $\seqc$ up to $\simeq$]
+\label{ax:L3-assoc-seq}
+For all kernels $K_1,K_2,K_3\in\mathcal{K}$,
+\[
+(K_3\seqc K_2)\seqc K_1 \ \simeq\ K_3\seqc (K_2\seqc K_1).
+\]
+\end{axiom}
+
+\begin{axiom}[L4: Identity laws for $\seqc$ up to $\simeq$ (recommended)]
+\label{ax:L4-id-seq}
+If $\mathrm{Id}$ (or $\mathrm{Id}_A$) is present, then for all kernels $K$ (and all compatible types when typed):
+\[
+K\seqc \mathrm{Id}\ \simeq\ K,
+\qquad
+\mathrm{Id}\seqc K\ \simeq\ K.
+\]
+\end{axiom}
+
+\begin{remark}
+Identity laws are recommended because they enable normalization rules that eliminate no-op stages.
+If identities are omitted, later chapters may still achieve a ``weak identity'' via normalization conventions,
+but the algebra becomes less canonical.
+\end{remark}
+
+\subsubsection{Optional monoidal laws for $\parc$ (normative if adopted)}
+
+If parallel composition is treated as a monoidal structure, record the laws explicitly.
+
+\begin{axiom}[L5: Associativity of $\parc$ up to $\simeq$ (optional)]
+\label{ax:L5-assoc-par}
+If $\parc$ is present, then for all $K_1,K_2,K_3$,
+\[
+(K_1\parc K_2)\parc K_3 \ \simeq\ K_1\parc (K_2\parc K_3).
+\]
+\end{axiom}
+
+\begin{axiom}[L6: Unit for $\parc$ up to $\simeq$ (optional)]
+\label{ax:L6-unit-par}
+If $\parc$ is present, there exists a distinguished unit kernel $\mathbf{1}$ such that for all $K$,
+\[
+K\parc \mathbf{1}\ \simeq\ K,
+\qquad
+\mathbf{1}\parc K\ \simeq\ K.
+\]
+\end{axiom}
+
+\begin{axiom}[L7: Symmetry/commutativity for $\parc$ up to $\simeq$ (optional)]
+\label{ax:L7-sym-par}
+If $\parc$ is present and intended as symmetric, then for all $K_1,K_2$,
+\[
+K_1\parc K_2 \ \simeq\ K_2\parc K_1.
+\]
+\end{axiom}
+
+\begin{remark}
+Whether $\parc$ should be symmetric is instance-dependent. Many domains require ordered parallel composition
+(e.g.\ when receipts record left/right provenance); in such cases omit L7 and later enforce a canonical ordering
+via normalization rather than symmetry.
+\end{remark}
+
+\subsubsection{A compact axiom table (output) (normative)}
+
+\begin{definition}[Composition law table]
+\label{def:law-table}
+A \emph{composition law table} for a process algebra instance $\mathfrak{P}$ (Definition~\ref{def:process-algebra-instance})
+is a selection of the axioms:
+\[
+\textbf{Laws}(\mathfrak{P}) \subseteq \{\text{L1},\text{L2},\text{L3},\text{L4},\text{L5},\text{L6},\text{L7}\},
+\]
+where:
+\begin{itemize}
+  \item L1 and L3 are the minimal sequential basis (congruence + associativity up to $\simeq$),
+  \item L4 is recommended (identities up to $\simeq$),
+  \item L2, L5--L7 are optional parallel/monoidal laws.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Later chapters either \emph{prove} the selected laws from semantics (e.g.\ by defining $\simeq$ observationally
+and showing congruence/associativity), or treat the law table as axioms and study the class of models (semantics)
+that satisfy them.
+\end{remark}

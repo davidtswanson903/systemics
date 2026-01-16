@@ -1,0 +1,37 @@
+% tex/main.tex
+% Orchestration only: title, TOC, and includes.
+
+\documentclass[11pt]{article}
+
+\input{tex/shared/packages}
+\input{tex/shared/style}
+\input{tex/shared/theorem-envs}
+\input{tex/shared/macros}
+\input{tex/shared/invariants}
+\input{tex/metadata}
+
+\title{Systemics (Scratch Rebuild Sketch):\\
+A Single Coherent Treatise from Core Axioms to an Algebra of Processes}
+\author{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{tex/parts/part0-meta}
+\input{tex/parts/part1-core}
+\input{tex/parts/part2-process-algebra}
+\input{tex/parts/part3-semantics}
+\input{tex/parts/part4-rewrite}
+\input{tex/parts/part5-enrich}
+\input{tex/parts/part6-canon}
+\input{tex/parts/part7-field-notes}
+
+\appendix
+\input{tex/appendices/appA-lemma-bridges}
+\input{tex/appendices/appB-exemplars}
+\input{tex/appendices/appC-rewrite-plan}
+
+\bibliographystyle{plain}
+\bibliography{bib/references}
+\end{document}

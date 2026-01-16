@@ -1,0 +1,25 @@
+/out/
+*.aux
+*.log
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# book build artifacts
+book/build/
+
+# exemplars build artifacts
+exemplars/**/build/
+
+# python (lib)
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+lib/.venv/
+lib/dist/
+lib/build/
+lib/*.egg-info/

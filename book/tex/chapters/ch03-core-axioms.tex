@@ -1,0 +1,128 @@
+% tex/chapters/ch03-core-axioms.tex
+
+\subsection{Chapter 3. The Core Axioms (normative)}
+\label{sec:partI-ch3}
+
+\paragraph{Goal.} State the \emph{minimum} axioms needed to talk about processes algebraically.
+
+\subsubsection{Axiom K0: Kernel contract existence (normative)}
+
+\begin{definition}[Kernel (primitive notion)]
+\label{def:kernel-primitive}
+A \emph{kernel} is a primitive symbol $K$ equipped with a designated set of admissible traces
+\[
+\Exec_K \subseteq T^\star.
+\]
+Equivalently, $\Exec_K$ is the \emph{execution semantics} of $K$.
+\end{definition}
+
+\begin{axiom}[K0: Well-typed execution witness]
+\label{ax:K0}
+For every kernel $K$, its semantics $\Exec_K$ is a subset of the trace type $T^\star$
+(Definition~\ref{def:trace-type}). In particular, every admissible execution of $K$ yields a well-typed trace
+\[
+\tau=(t,u,\gamma;\ u',v',d',r',c',\gamma')\in T^\star
+\]
+(with $c'$ omitted when $C$ is absent).
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:K0} is deliberately weak: it asserts only that kernels have semantics \emph{as trace-sets}.
+No determinism, totality, or internal structure is assumed.
+\end{remark}
+
+\subsubsection{Axiom R0: Receipt canonicalization (normative)}
+
+\begin{definition}[Receipt canonicalization map]
+\label{def:canon}
+A \emph{canonicalization map} is a function
+\[
+\canon:R\to R.
+\]
+\end{definition}
+
+\begin{axiom}[R0: Idempotence of canonicalization]
+\label{ax:R0}
+For all $r\in R$,
+\[
+\canon(\canon(r))=\canon(r).
+\]
+\end{axiom}
+
+\begin{remark}
+R0 provides a minimal ``normalization'' operator for evidence objects. Further laws
+(e.g.\ compatibility with receipt merge) appear only when a merge operator is introduced.
+\end{remark}
+
+\subsubsection{Axiom T0: Trace soundness schema for composition (normative)}
+
+Systemics must be able to \emph{construct} traces of a composed process from traces of its components,
+but it treats the constructor kit as \emph{declared structure}, not implicit magic.
+
+\begin{definition}[Compatibility predicate (schema)]
+\label{def:compat-schema}
+A \emph{compatibility predicate} is any predicate
+\[
+\Compat \subseteq T^\star \times T^\star,
+\]
+written $\Compat(\tau_1,\tau_2)$, intended to mean ``$\tau_1$ and $\tau_2$ can be composed''.
+\end{definition}
+
+\begin{definition}[Trace composition constructor (schema)]
+\label{def:compose-schema}
+A \emph{trace composition constructor} is a partial function
+\[
+\Compose:\; T^\star \times T^\star \rightharpoonup T^\star
+\]
+such that $\Compose(\tau_1,\tau_2)$ is defined only when $\Compat(\tau_1,\tau_2)$ holds.
+\end{definition}
+
+\begin{axiom}[T0: Declared constructor soundness]
+\label{ax:T0}
+Whenever a Systemics instance declares $(\Compat,\Compose)$ to define a composition mode,
+it must satisfy the following \emph{soundness schema}:
+
+\medskip
+\noindent
+If $\tau_1\in\Exec_{K_1}$ and $\tau_2\in\Exec_{K_2}$ and $\Compat(\tau_1,\tau_2)$ holds,
+then $\Compose(\tau_1,\tau_2)$ is defined and yields a well-typed trace in $T^\star$.
+\end{axiom}
+
+\begin{remark}
+T0 does \emph{not} assert that any particular compatibility condition or constructor exists universally.
+It asserts that whenever the theory introduces composition, it does so by a declared kit that is well-typed.
+Concrete composition operators (sequential, parallel, branching) are introduced later as additional structure.
+\end{remark}
+
+\subsubsection{Axiom C0: Contract semantics (normative)}
+
+\begin{definition}[Contract]
+\label{def:contract}
+A \emph{contract} is a subset $\mathcal{C}\subseteq T^\star$ (equivalently, a predicate $\mathcal{C}(\tau)$).
+\end{definition}
+
+\begin{definition}[Conformance]
+\label{def:conformance}
+A kernel $K$ \emph{conforms} to a contract $\mathcal{C}$, written $K\models \mathcal{C}$, iff
+\[
+\Exec_K \subseteq \mathcal{C}.
+\]
+\end{definition}
+
+\begin{axiom}[C0: Contracts are trace-sets; conformance is inclusion]
+\label{ax:C0}
+Contracts are sets of traces (Definition~\ref{def:contract}) and conformance is subset inclusion
+(Definition~\ref{def:conformance}). No alternative conformance semantics is assumed at the core level.
+\end{axiom}
+
+\begin{remark}
+C0 is the core bridge between ``process'' and ``guarantee.'' Everything else in Systemics
+(e.g.\ composition preservation theorems, stability contracts, proof-carrying contracts)
+is built by defining new contracts and proving inclusion statements.
+\end{remark}
+
+\paragraph{Notes (normative stance).}
+Axioms~\ref{ax:K0}, \ref{ax:R0}, \ref{ax:T0}, and \ref{ax:C0} constitute the irreducible nucleus for the field
+as developed in this document. Everything else---composition operators, equivalence relations,
+rewriting/normal forms, evidence verification, stability, and capacity---is introduced as \emph{additional declared structure}
+with explicit definitions and axioms, never as hidden assumptions.

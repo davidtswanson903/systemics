@@ -1,0 +1,4 @@
+id = "EX3_evidence"
+title = "EX3: Evidence (finite toy)"
+covers = ["Sigma2", "Ch14"]
+enrichments = ["evidence"]

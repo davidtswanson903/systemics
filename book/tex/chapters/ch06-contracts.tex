@@ -1,0 +1,68 @@
+% tex/chapters/ch06-contracts.tex
+
+\subsection{Chapter 6. Contract Algebra and Conformance Preservation (normative)}
+\label{sec:partI-ch6}
+
+\paragraph{Goal.} Make ``guarantees compose'' a theorem, not a slogan.
+
+\subsubsection{Induced contract operators (normative)}
+
+Let $\mathfrak{P}$ be a process algebra instance (Definition~\ref{def:process-algebra-instance}) with
+a declared composition kit $\mathfrak{K}_{\mathrm{kit}}$ (Definition~\ref{def:composition-kit}).
+Write $(\Compat_{\seq},\Compose_{\seq})$ for the sequential kit and (optionally)
+$(\Compat_{\par},\Compose_{\par})$ for the parallel kit.
+
+\begin{definition}[Sequential contract composition]
+\label{def:cseq}
+For contracts $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$, define the \emph{sequential contract composition}
+operator $\cseq$ by:
+\[
+\mathcal{C}_2 \cseq \mathcal{C}_1
+\ :=\
+\big\{\, \Compose_{\seq}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\seq}(\tau_1,\tau_2)\,\big\},
+\]
+where $\Compose_{\seq}(\tau_1,\tau_2)$ is understood to be defined whenever $\Compat_{\seq}(\tau_1,\tau_2)$ holds
+(as required by the constructor soundness schema, Axiom~\ref{ax:T0}).
+\end{definition}
+
+\begin{definition}[Parallel contract composition (optional)]
+\label{def:cpar}
+If $(\Compat_{\par},\Compose_{\par})$ is present, define the \emph{parallel contract composition}
+operator $\cpar$ by:
+\[
+\mathcal{C}_1 \cpar \mathcal{C}_2
+\ :=\
+\big\{\, \Compose_{\par}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\par}(\tau_1,\tau_2)\,\big\}.
+\]
+\end{definition}
+
+\begin{remark}
+The contract operators are \emph{induced} by the same kit as kernel composition. This is the central design rule:
+\emph{the constructors that build composed traces are the constructors that build composed guarantees}.
+\end{remark}
+
+\subsubsection{Conformance preservation (normative)}
+
+\begin{theorem}[Sequential conformance preservation]
+\label{thm:seq-conformance-preservation}
+Let $K_1,K_2\in \mathcal{K}$ and let $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$ be contracts.
+Assume:
+\begin{enumerate}
+  \item $K_1 \models \mathcal{C}_1$,
+  \item $K_2 \models \mathcal{C}_2$,
+  \item (\emph{compositional generation}) every trace of $K_2\seqc K_1$ arises from composing
+        a compatible pair of traces from $K_1$ and $K_2$ via the sequential constructor, i.e.:
+        \[
+        \forall \tau\in \Exec_{K_2\seqc K_1}\ \exists \tau_1\in \Exec_{K_1},\ \tau_2\in \Exec_{K_2}:
+        \Compat_{\seq}(\tau_1,\tau_2)\ \wedge\ \tau=\Compose_{\seq}(\tau_1,\tau_2).
+        \]
+\end{enumerate}
+Then:
+\[
+K_2\seqc K_1 \models (\mathcal{C}_2 \cseq \mathcal{C}_1).
+\]
+\end{theorem}
+
+\begin{proof}
+Let $\tau\in \Exec_{K_2\seqc K_1}$. By assumption (3), there exist $\tau_1\in\Exec_{K_1}$ and
+$\tau_2\in\Exec_{K_2}$ such that $\Compat_{\seq}(\tau_1,\tau_2)$ and $\tau=\Compose_{\seq}(\tau_1,\tau_2)$.

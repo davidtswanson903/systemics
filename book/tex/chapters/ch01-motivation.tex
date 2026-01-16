@@ -1,0 +1,76 @@
+% tex/chapters/ch01-motivation.tex
+
+\subsection{Chapter 1. Motivation and the Object of Study (informative)}
+\label{sec:partI-ch1}
+
+\paragraph{Thesis.}
+Systemics is a \emph{calculus of accountable processes}. Its central aim is to treat
+``doing'' (transformation) with the same mathematical seriousness that algebra treats ``combining''
+and logic treats ``proving''.
+
+\paragraph{What Systemics is.}
+A Systemics development is not primarily a software specification. It is a mathematical framework
+that supplies:
+\begin{itemize}
+  \item \textbf{an algebra of process composition} (pipelines built from parts),
+  \item \textbf{a theory of guarantees} stated as compositional contracts,
+  \item \textbf{a theory of accountability} where executions emit evidence objects (receipts),
+  \item \textbf{a theory of robustness} (optional) via probes and invariance budgets,
+  \item \textbf{a theory of feasibility} (optional) via capacity/cost constraints.
+\end{itemize}
+The defining move is that these are not separate stories; they are meant to be aligned by the
+same constructors so that composition preserves both \emph{behavior} and \emph{claims about behavior}.
+
+\paragraph{The object of study.}
+The primitive object is a \emph{kernel}---a process viewed abstractly, without commitment to implementation.
+At the field level, a kernel is characterized only by what it \emph{can witness}:
+
+\begin{itemize}
+  \item it is invoked on an \emph{artifact} in a \emph{context} (envelope/regime),
+  \item it yields an \emph{output artifact} and \emph{observables} (e.g.\ a valuation and a decision),
+  \item it may emit a \emph{receipt} intended to witness what occurred (or why a decision is justified),
+  \item it may emit (or induce) a \emph{capacity/cost witness} describing resource usage.
+\end{itemize}
+
+\noindent
+This description is intentionally relational: Systemics begins by treating a kernel as a set of
+admissible executions (traces), not as an algorithm.
+
+\paragraph{Why receipts are first-class.}
+In Systemics, receipts are not ``logs.'' A receipt is treated as a mathematical witness object:
+something that can (in principle) be checked independently of the kernel that produced it.
+Receipts become first-class for three reasons:
+
+\begin{enumerate}
+  \item \textbf{Accountability:} claims about an execution can be separated from the execution mechanism.
+  \item \textbf{Compositional evidence:} when processes compose, their receipts can compose into a receipt for the composite.
+  \item \textbf{Proof relevance:} later chapters upgrade receipts into proof objects with verifiers and closure theorems.
+\end{enumerate}
+
+\paragraph{Why budgets are first-class.}
+Budgets (invariance budgets, floors/thresholds, capacity bounds) are not treated as tuning knobs;
+they are treated as parameters that define families of guarantees and therefore define theorems.
+They are first-class because:
+
+\begin{enumerate}
+  \item \textbf{Robustness:} invariance budgets let the theory state ``small changes do not change the outcome.''
+  \item \textbf{Feasibility:} capacity bounds let the theory state ``this guarantee is achievable under resources.''
+  \item \textbf{Propagation:} composition requires budget propagation laws (how budgets combine across pipelines).
+\end{enumerate}
+
+\paragraph{What this chapter does \emph{not} do.}
+This chapter provides motivation and the field-level object of study, but it does not yet define:
+\begin{itemize}
+  \item the primitive universes ($U,V,R,\Gamma,\ldots$) precisely,
+  \item what a trace is as a typed object,
+  \item what ``conformance'' means as a formal judgment,
+  \item how kernels compose or how receipts compose,
+  \item how equivalence and normal forms are defined.
+\end{itemize}
+Those appear in the remaining chapters of Part~\ref{sec:partI} and the subsequent parts.
+
+\paragraph{A stable mental model (optional intuition).}
+Keep the following guiding picture:
+a kernel is ``whatever produces traces,'' a contract is ``which traces are acceptable,''
+and the field is ``the algebra that makes these structures compose together.''
+Later, Systemics enriches this picture with stability, capacity, and proof-carrying receipts.

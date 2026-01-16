@@ -1,0 +1,136 @@
+% tex/chapters/ch02-universes.tex
+
+\subsection{Chapter 2. Primitive Universes and Judgments (normative)}
+\label{sec:partI-ch2}
+
+\paragraph{Goal.} Fix the minimal typed universe in which everything is stated.
+
+\subsubsection{Primitive carrier sets (normative)}
+
+\begin{definition}[Artifact universe]
+\label{def:U}
+Let $U$ be a set. Elements $u\in U$ are called \emph{artifacts}.
+\end{definition}
+
+\begin{definition}[Valuation space]
+\label{def:V}
+Let $V$ be a set. Elements $v\in V$ are called \emph{valuations}.
+\end{definition}
+
+\begin{definition}[Decision space]
+\label{def:2}
+Let $2 := \{0,1\}$ be the set of \emph{decisions}.
+\end{definition}
+
+\begin{remark}
+No structure is assumed on $U$ or $V$ at this stage (no topology, metric, algebra). Those are enrichments
+introduced later if needed.
+\end{remark}
+
+\subsubsection{Context and evidence carriers (normative)}
+
+\begin{definition}[Envelope / regime context]
+\label{def:Gamma}
+Let $\Gamma$ be a set. Elements $\gamma\in \Gamma$ are called \emph{envelopes} (or \emph{regimes}).
+An envelope abstracts policy/epoch/mode constraints relevant to interpretation and verification.
+\end{definition}
+
+\begin{definition}[Receipt space]
+\label{def:R}
+Let $R$ be a set. Elements $r\in R$ are called \emph{receipts}.
+\end{definition}
+
+\begin{definition}[Capacity space (optional)]
+\label{def:C}
+Optionally, let $C$ be a set whose elements are called \emph{capacity witnesses} (or \emph{cost witnesses}).
+\end{definition}
+
+\begin{remark}
+At the core level, $C$ is merely a carrier set. Order/monoid structure (for feasibility and propagation)
+is introduced in the capacity chapter.
+\end{remark}
+
+\subsubsection{Execution parameterization (normative)}
+
+\begin{definition}[Execution parameter index set]
+\label{def:T}
+Let $T$ be a set. Elements $t\in T$ are called \emph{execution parameters}.
+Intuitively, $t$ may represent an index, a schedule selector, a seed, or any abstract knob needed
+to distinguish executions; Systemics does not interpret $T$ internally.
+\end{definition}
+
+\subsubsection{Trace schema as a witness type (normative)}
+
+\begin{definition}[Trace type]
+\label{def:trace-type}
+Define the \emph{trace type} (witness-object type)
+\[
+T^\star \ :=\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times C\times \Gamma),
+\]
+when $C$ is present, and otherwise
+\[
+T^\star \ :=\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times \Gamma).
+\]
+We write a trace $\tau\in T^\star$ as
+\[
+\tau = (t,u,\gamma;\ u',v',d',r',c',\gamma')
+\]
+(with the $c'$ component omitted when $C$ is absent).
+\end{definition}
+
+\begin{definition}[Trace projections]
+\label{def:trace-proj}
+For $\tau=(t,u,\gamma;\ u',v',d',r',c',\gamma')\in T^\star$, define the projections:
+\[
+\mathrm{in}(\tau):=(t,u,\gamma),\qquad
+\mathrm{out}(\tau):=(u',v',d',r',c',\gamma'),
+\]
+and component projections:
+\[
+ t(\tau):=t,\quad u(\tau):=u,\quad \gamma(\tau):=\gamma,\quad
+ u'(\tau):=u',\quad v(\tau):=v',\quad d(\tau):=d',\quad r(\tau):=r',\quad c(\tau):=c',\quad \gamma'(\tau):=\gamma'.
+\]
+(If $C$ is absent, omit $c(\tau)$.)
+\end{definition}
+
+\begin{remark}
+Traces are the \emph{witness objects} of the field: contracts, conformance, equivalence, rewriting,
+stability, capacity feasibility, and evidence all ultimately talk about sets of traces or maps out of traces.
+\end{remark}
+
+\subsubsection{Observables and claims (normative outputs)}
+
+\begin{definition}[Observable carrier (optional)]
+\label{def:obs-carrier}
+Optionally, fix a set $\mathcal{O}$ called the \emph{observable carrier} and a map
+\[
+\mathrm{obs}:T^\star \to \mathcal{O},
+\]
+intended to forget non-observable parts of a trace (e.g.\ hide internal receipt details or intermediate artifacts).
+\end{definition}
+
+\begin{remark}
+If $\mathcal{O}$ is not fixed here, it may be introduced later (e.g.\ in the equivalence chapter)
+as a derived object such as the canonical view $\cview$.
+\end{remark}
+
+\begin{definition}[Claim shape (minimal)]
+\label{def:claim-shape}
+A \emph{claim} is any element of a designated set $\mathsf{Claim}$ whose members are intended to be
+witnessable by receipts and/or traces. Minimally, a claim may be taken as a record with fields:
+\[
+\phi = (\gamma,\ t,\ u,\ u',\ v,\ d),
+\]
+optionally extended with receipt and capacity fields:
+\[
+\phi = (\gamma,\ t,\ u,\ u',\ v,\ d,\ r,\ c,\ \gamma').
+\]
+The choice of $\mathsf{Claim}$ is left abstract at the core level; later chapters constrain it
+when introducing verification and evidence closure.
+\end{definition}
+
+\paragraph{Chapter outputs (summary).}
+Chapter~\ref{sec:partI-ch2} fixes the carrier sets $U,V,2,\Gamma,R$ (and optional $C$), the parameter set $T$,
+the witness type $T^\star$, and the basic projections $\mathrm{in}(\cdot)$ and $\mathrm{out}(\cdot)$.
+It also introduces the optional observable carrier $\mathcal{O}$ and the minimal shape of a claim $\phi$,
+both of which are refined in later parts.

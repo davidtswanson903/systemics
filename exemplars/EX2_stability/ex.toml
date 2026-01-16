@@ -1,0 +1,4 @@
+id = "EX2_stability"
+title = "EX2: Stability (finite toy)"
+covers = ["Sigma2", "Ch12"]
+enrichments = ["stability"]

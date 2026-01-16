@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "systemics"
+version = "0.0.0"
+description = "Systemics meta-framework: universal interfaces, constructors, and law-check harnesses."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "All rights reserved."}
+authors = [{name = ""}]
+
+dependencies = [
+  "typing-extensions>=4.8",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

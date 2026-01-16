@@ -1,0 +1,4 @@
+id = "EX1_minimal_algebra"
+title = "EX1: Minimal Algebra (finite toy)"
+covers = ["Sigma2", "Sigma3"]
+enrichments = []

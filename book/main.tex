@@ -1,0 +1,28 @@
+% book/main.tex
+% Orchestration only: title, TOC, and includes.
+
+\documentclass[11pt]{article}
+
+\input{preamble/packages}
+\input{preamble/macros}
+\input{preamble/theorem-envs}
+\input{preamble/glossary}
+
+\title{Systemics (Scratch Rebuild Sketch):\\
+A Single Coherent Treatise from Core Axioms to an Algebra of Processes}
+\author{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\input{parts/part1-core}
+\input{parts/part2-algebra}
+\input{parts/part3-semantics}
+\input{parts/part4-rewriting}
+\input{parts/part5-enrichments}
+\input{parts/part6-exemplars}
+
+\bibliographystyle{plain}
+\bibliography{bib/references}
+\end{document}

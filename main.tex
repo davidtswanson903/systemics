@@ -1,0 +1,2281 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+
+\title{Systemics (Scratch Rebuild Sketch):\\
+A Single Coherent Treatise from Core Axioms to an Algebra of Processes}
+\author{}
+\date{}
+
+% --- theorem environments ---
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{Remark}
+
+% --- macros ---
+\newcommand{\Exec}{\mathrm{Exec}}
+\newcommand{\canon}{\mathrm{canon}}
+\newcommand{\cview}{\mathrm{cview}}
+\newcommand{\Norm}{\mathrm{Norm}}
+\newcommand{\NF}{\mathrm{NF}}
+\newcommand{\Verify}{\mathrm{Verify}}
+\newcommand{\Replay}{\mathrm{Replay}}
+\newcommand{\Wob}{\mathrm{wob}}
+\newcommand{\Cost}{\mathrm{Cost}}
+
+\newcommand{\seqc}{\circ}
+\newcommand{\parc}{\otimes}
+\newcommand{\MergeR}{\oplus_R}
+\newcommand{\MergeC}{\oplus_C}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% ============================================================
+\section{Meta: Charter, Method, and Reading Guide}
+\label{sec:meta}
+
+\subsection{Charter (normative)}
+
+\paragraph{What Systemics is.}
+Systemics is a \emph{mathematical field} whose central object is a \emph{process}:
+a transformation of structured artifacts performed under a declared envelope (regime),
+optionally emitting receipts (evidence) and consuming capacity (resources).
+Its goal is to provide an \emph{algebra of processes} in which:
+
+\begin{itemize}[leftmargin=*, itemsep=0.25em]
+  \item processes can be composed into pipelines,
+  \item guarantees (contracts) compose predictably,
+  \item processes can be refactored by equational reasoning (rewrite to normal forms),
+  \item robustness (stability under probes) is stated and proven,
+  \item resource feasibility is treated as a first-class constraint,
+  \item executions are \emph{accountable} via proof-like receipts with independent verification.
+\end{itemize}
+
+\paragraph{What Systemics is not.}
+Systemics is not tied to software, a machine model, a programming language, a proof assistant,
+or a particular domain. It may be instantiated in those settings, but the field is defined
+at the level of abstract structures, relations, and theorems.
+
+\paragraph{Primary deliverable of the field.}
+A Systemics theory is a \emph{coherent package} of:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a process algebra (operators and laws),
+  \item a semantics class (models) that interprets the algebra as behavior,
+  \item contract and evidence layers that make claims compositional and checkable.
+\end{enumerate}
+
+\subsection{Method: From Core to Enrichments (normative)}
+
+\paragraph{Core-first discipline.}
+This treatise is written bottom-up. Each chapter:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item declares its dependencies (which previous definitions/axioms it uses),
+  \item introduces no hidden structure,
+  \item provides either a theorem or an axiom explicitly.
+\end{itemize}
+
+\paragraph{Two-layer development.}
+We distinguish:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Core structure:} the minimal objects and laws needed to speak about processes algebraically.
+  \item \textbf{Enrichments:} additional structures (stability, capacity, evidence) that attach to the core and remain compositional.
+\end{itemize}
+
+\paragraph{Normative vs.\ informative.}
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Normative} text defines the field: it contains required definitions, axioms, and theorem targets.
+  \item \textbf{Informative} text provides intuition, examples, and optional strengthenings.
+\end{itemize}
+
+\subsection{Guiding Principles (normative)}
+
+\begin{axiom}[Receipts are witnesses]
+A receipt is treated as a mathematical witness object. It may be checked independently of the process that emitted it.
+\end{axiom}
+
+\begin{axiom}[Contracts are trace-sets]
+A contract is a set (predicate) of admissible traces, and conformance is subset inclusion.
+\end{axiom}
+
+\begin{axiom}[Composition alignment]
+Whenever a composition operator is introduced on processes, a matching operator must be introduced on contracts and (when present) on receipts/capacities, using the same constructor kit.
+\end{axiom}
+
+\begin{remark}
+This ``alignment'' principle is the reason Systemics can be both algebraic (equational)
+and accountable (proof-relevant): the same constructors drive behavior, guarantees, and evidence.
+\end{remark}
+
+\subsection{Reading Guide (informative)}
+
+\paragraph{Three readings of the same material.}
+This document can be read in three coherent ways:
+
+\begin{enumerate}[leftmargin=*, itemsep=0.25em]
+  \item \textbf{Algebra reading (process calculus).}
+  Focus on operators, laws, equivalence, rewriting, and normal forms. This is the ``algebra of processes'' track.
+
+  \item \textbf{Semantics reading (models).}
+  Focus on execution relations, replay/verification skeletons, and observable views. This is the ``what it means'' track.
+
+  \item \textbf{Accountability reading (evidence + constraints).}
+  Focus on stability, capacity feasibility, and receipts-as-proofs with closure under composition.
+  This is the ``guarantees you can check'' track.
+\end{enumerate}
+
+\paragraph{Minimal path (first pass).}
+A recommended minimal first pass is:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item Core objects and contracts (Parts I--II),
+  \item execution semantics and observational equivalence (Part III),
+  \item conformance preservation theorem (Part II),
+  \item evidence closure (Part V).
+\end{itemize}
+
+\paragraph{Second pass (calculus maturity).}
+Add rewriting + normal forms (Part IV), then stability and capacity (Part V), then exemplars (Part VI).
+
+\subsection{What counts as a Systemics Theory? (normative)}
+
+\begin{definition}[Systemics theory]
+A \emph{Systemics theory} $\mathcal{S}$ is a tuple
+\[
+\mathcal{S}=(\mathfrak{P},\mathfrak{M},\mathfrak{Con},\mathfrak{Ev},\mathfrak{Ext})
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item $\mathfrak{P}$ is a process algebra instance (kernels + operators + laws, up to equivalence),
+  \item $\mathfrak{M}$ is a class of models (semantics) interpreting processes as executions/traces,
+  \item $\mathfrak{Con}$ is a contract algebra aligned with $\mathfrak{P}$ and preserved by composition,
+  \item $\mathfrak{Ev}$ is an evidence layer (receipts + verifier) with closure under composition,
+  \item $\mathfrak{Ext}$ is an (optional) set of enrichments (stability, capacity, morphisms) that remain aligned.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Different Systemics theories share the same \emph{shape} but differ in what they take as primitives:
+what $U$ is, what receipts look like, how observables are chosen, what stability probes mean, and how capacity is ordered.
+\end{remark}
+
+\subsection{Compatibility with Existing Drafts (informative)}
+
+The prior $\Sigma 1$--$\Sigma 6$ drafts correspond to chapters as follows:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item $\Sigma 1$ $\to$ execution/receipts/replay skeleton (Part III),
+  \item $\Sigma 2$ $\to$ composition + conformance preservation (Part II),
+  \item $\Sigma 3$ $\to$ equivalence + rewriting + normal forms (Parts III--IV),
+  \item $\Sigma 4$ $\to$ stability enrichment (Part V),
+  \item $\Sigma 5$ $\to$ capacity enrichment (Part V),
+  \item $\Sigma 6$ $\to$ evidence layer (Part V).
+\end{itemize}
+
+\subsection{Field Boundary and Ambition (informative)}
+
+Systemics aims to be ``foundational'' in the same sense that:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item algebra abstracts arithmetic and structure-preserving transformation,
+  \item category theory abstracts compositional structure,
+  \item logic abstracts derivability and proof,
+\end{itemize}
+but it is centered on \emph{process} (transformation under constraints) with explicit accountability objects (receipts)
+and explicit robustness/resource structure (budgets/capacity).
+
+\paragraph{Pragmatic criterion.}
+Systemics becomes a field (not a vocabulary) when:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item multiple nontrivial theorems are reusable across domains,
+  \item exemplars instantiate the same axioms/laws with minimal ad hoc additions,
+  \item normal forms enable real refactorability,
+  \item verification closure makes evidence compositional and checkable.
+\end{itemize}
+% ============================================================
+
+% ============================================================
+% ============================================================
+\section{Part I --- Core: The Irreducible Nucleus}
+\label{sec:partI}
+
+\subsection{Chapter 1. Motivation and the Object of Study (informative)}
+\label{sec:partI-ch1}
+
+\paragraph{Thesis.}
+Systemics is a \emph{calculus of accountable processes}. Its central aim is to treat
+``doing'' (transformation) with the same mathematical seriousness that algebra treats ``combining''
+and logic treats ``proving''.
+
+\paragraph{What Systemics is.}
+A Systemics development is not primarily a software specification. It is a mathematical framework
+that supplies:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{an algebra of process composition} (pipelines built from parts),
+  \item \textbf{a theory of guarantees} stated as compositional contracts,
+  \item \textbf{a theory of accountability} where executions emit evidence objects (receipts),
+  \item \textbf{a theory of robustness} (optional) via probes and invariance budgets,
+  \item \textbf{a theory of feasibility} (optional) via capacity/cost constraints.
+\end{itemize}
+The defining move is that these are not separate stories; they are meant to be aligned by the
+same constructors so that composition preserves both \emph{behavior} and \emph{claims about behavior}.
+
+\paragraph{The object of study.}
+The primitive object is a \emph{kernel}---a process viewed abstractly, without commitment to implementation.
+At the field level, a kernel is characterized only by what it \emph{can witness}:
+
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item it is invoked on an \emph{artifact} in a \emph{context} (envelope/regime),
+  \item it yields an \emph{output artifact} and \emph{observables} (e.g.\ a valuation and a decision),
+  \item it may emit a \emph{receipt} intended to witness what occurred (or why a decision is justified),
+  \item it may emit (or induce) a \emph{capacity/cost witness} describing resource usage.
+\end{itemize}
+
+\noindent
+This description is intentionally relational: Systemics begins by treating a kernel as a set of
+admissible executions (traces), not as an algorithm.
+
+\paragraph{Why receipts are first-class.}
+In Systemics, receipts are not ``logs.'' A receipt is treated as a mathematical witness object:
+something that can (in principle) be checked independently of the kernel that produced it.
+Receipts become first-class for three reasons:
+
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Accountability:} claims about an execution can be separated from the execution mechanism.
+  \item \textbf{Compositional evidence:} when processes compose, their receipts can compose into a receipt for the composite.
+  \item \textbf{Proof relevance:} later chapters upgrade receipts into proof objects with verifiers and closure theorems.
+\end{enumerate}
+
+\paragraph{Why budgets are first-class.}
+Budgets (invariance budgets, floors/thresholds, capacity bounds) are not treated as tuning knobs;
+they are treated as parameters that define families of guarantees and therefore define theorems.
+They are first-class because:
+
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Robustness:} invariance budgets let the theory state ``small changes do not change the outcome.''
+  \item \textbf{Feasibility:} capacity bounds let the theory state ``this guarantee is achievable under resources.''
+  \item \textbf{Propagation:} composition requires budget propagation laws (how budgets combine across pipelines).
+\end{enumerate}
+
+\paragraph{What this chapter does \emph{not} do.}
+This chapter provides motivation and the field-level object of study, but it does not yet define:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item the primitive universes ($U,V,R,\Gamma,\ldots$) precisely,
+  \item what a trace is as a typed object,
+  \item what ``conformance'' means as a formal judgment,
+  \item how kernels compose or how receipts compose,
+  \item how equivalence and normal forms are defined.
+\end{itemize}
+Those appear in the remaining chapters of Part~\ref{sec:partI} and the subsequent parts.
+
+\paragraph{A stable mental model (optional intuition).}
+Keep the following guiding picture:
+a kernel is ``whatever produces traces,'' a contract is ``which traces are acceptable,''
+and the field is ``the algebra that makes these structures compose together.''
+Later, Systemics enriches this picture with stability, capacity, and proof-carrying receipts.
+
+% ============================================================
+
+
+```latex
+\subsection{Chapter 2. Primitive Universes and Judgments (normative)}
+\label{sec:partI-ch2}
+
+\paragraph{Goal.} Fix the minimal typed universe in which everything is stated.
+
+\subsubsection{Primitive carrier sets (normative)}
+
+\begin{definition}[Artifact universe]
+\label{def:U}
+Let $U$ be a set. Elements $u\in U$ are called \emph{artifacts}.
+\end{definition}
+
+\begin{definition}[Valuation space]
+\label{def:V}
+Let $V$ be a set. Elements $v\in V$ are called \emph{valuations}.
+\end{definition}
+
+\begin{definition}[Decision space]
+\label{def:2}
+Let $2 := \{0,1\}$ be the set of \emph{decisions}.
+\end{definition}
+
+\begin{remark}
+No structure is assumed on $U$ or $V$ at this stage (no topology, metric, algebra). Those are enrichments
+introduced later if needed.
+\end{remark}
+
+\subsubsection{Context and evidence carriers (normative)}
+
+\begin{definition}[Envelope / regime context]
+\label{def:Gamma}
+Let $\Gamma$ be a set. Elements $\gamma\in \Gamma$ are called \emph{envelopes} (or \emph{regimes}).
+An envelope abstracts policy/epoch/mode constraints relevant to interpretation and verification.
+\end{definition}
+
+\begin{definition}[Receipt space]
+\label{def:R}
+Let $R$ be a set. Elements $r\in R$ are called \emph{receipts}.
+\end{definition}
+
+\begin{definition}[Capacity space (optional)]
+\label{def:C}
+Optionally, let $C$ be a set whose elements are called \emph{capacity witnesses} (or \emph{cost witnesses}).
+\end{definition}
+
+\begin{remark}
+At the core level, $C$ is merely a carrier set. Order/monoid structure (for feasibility and propagation)
+is introduced in the capacity chapter.
+\end{remark}
+
+\subsubsection{Execution parameterization (normative)}
+
+\begin{definition}[Execution parameter index set]
+\label{def:T}
+Let $T$ be a set. Elements $t\in T$ are called \emph{execution parameters}.
+Intuitively, $t$ may represent an index, a schedule selector, a seed, or any abstract knob needed
+to distinguish executions; Systemics does not interpret $T$ internally.
+\end{definition}
+
+\subsubsection{Trace schema as a witness type (normative)}
+
+\begin{definition}[Trace type]
+\label{def:trace-type}
+Define the \emph{trace type} (witness-object type)
+\[
+T^\star \ :=\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times C\times \Gamma),
+\]
+when $C$ is present, and otherwise
+\[
+T^\star \ :=\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times \Gamma).
+\]
+We write a trace $\tau\in T^\star$ as
+\[
+\tau = (t,u,\gamma;\ u',v',d',r',c',\gamma')
+\]
+(with the $c'$ component omitted when $C$ is absent).
+\end{definition}
+
+\begin{definition}[Trace projections]
+\label{def:trace-proj}
+For $\tau=(t,u,\gamma;\ u',v',d',r',c',\gamma')\in T^\star$, define the projections:
+\[
+\mathrm{in}(\tau):=(t,u,\gamma),\qquad
+\mathrm{out}(\tau):=(u',v',d',r',c',\gamma'),
+\]
+and component projections:
+\[
+t(\tau):=t,\quad u(\tau):=u,\quad \gamma(\tau):=\gamma,\quad
+u'(\tau):=u',\quad v(\tau):=v',\quad d(\tau):=d',\quad r(\tau):=r',\quad c(\tau):=c',\quad \gamma'(\tau):=\gamma'.
+\]
+(If $C$ is absent, omit $c(\tau)$.)
+\end{definition}
+
+\begin{remark}
+Traces are the \emph{witness objects} of the field: contracts, conformance, equivalence, rewriting,
+stability, capacity feasibility, and evidence all ultimately talk about sets of traces or maps out of traces.
+\end{remark}
+
+\subsubsection{Observables and claims (normative outputs)}
+
+\begin{definition}[Observable carrier (optional)]
+\label{def:obs-carrier}
+Optionally, fix a set $\mathcal{O}$ called the \emph{observable carrier} and a map
+\[
+\mathrm{obs}:T^\star \to \mathcal{O},
+\]
+intended to forget non-observable parts of a trace (e.g.\ hide internal receipt details or intermediate artifacts).
+\end{definition}
+
+\begin{remark}
+If $\mathcal{O}$ is not fixed here, it may be introduced later (e.g.\ in the equivalence chapter)
+as a derived object such as the canonical view $\cview$.
+\end{remark}
+
+\begin{definition}[Claim shape (minimal)]
+\label{def:claim-shape}
+A \emph{claim} is any element of a designated set $\mathsf{Claim}$ whose members are intended to be
+witnessable by receipts and/or traces. Minimally, a claim may be taken as a record with fields:
+\[
+\phi = (\gamma,\ t,\ u,\ u',\ v,\ d),
+\]
+optionally extended with receipt and capacity fields:
+\[
+\phi = (\gamma,\ t,\ u,\ u',\ v,\ d,\ r,\ c,\ \gamma').
+\]
+The choice of $\mathsf{Claim}$ is left abstract at the core level; later chapters constrain it
+when introducing verification and evidence closure.
+\end{definition}
+
+\paragraph{Chapter outputs (summary).}
+Chapter~\ref{sec:partI-ch2} fixes the carrier sets $U,V,2,\Gamma,R$ (and optional $C$), the parameter set $T$,
+the witness type $T^\star$, and the basic projections $\mathrm{in}(\cdot)$ and $\mathrm{out}(\cdot)$.
+It also introduces the optional observable carrier $\mathcal{O}$ and the minimal shape of a claim $\phi$,
+both of which are refined in later parts.
+```
+
+
+% ============================================================
+\section{Part II --- Process Algebra: Operators and Laws}
+\subsection{Chapter 3. The Core Axioms (normative)}
+\label{sec:partI-ch3}
+
+\paragraph{Goal.} State the \emph{minimum} axioms needed to talk about processes algebraically.
+
+\subsubsection{Axiom K0: Kernel contract existence (normative)}
+
+\begin{definition}[Kernel (primitive notion)]
+\label{def:kernel-primitive}
+A \emph{kernel} is a primitive symbol $K$ equipped with a designated set of admissible traces
+\[
+\Exec_K \subseteq T^\star.
+\]
+Equivalently, $\Exec_K$ is the \emph{execution semantics} of $K$.
+\end{definition}
+
+\begin{axiom}[K0: Well-typed execution witness]
+\label{ax:K0}
+For every kernel $K$, its semantics $\Exec_K$ is a subset of the trace type $T^\star$
+(Definition~\ref{def:trace-type}). In particular, every admissible execution of $K$ yields a well-typed trace
+\[
+\tau=(t,u,\gamma;\ u',v',d',r',c',\gamma')\in T^\star
+\]
+(with $c'$ omitted when $C$ is absent).
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:K0} is deliberately weak: it asserts only that kernels have semantics \emph{as trace-sets}.
+No determinism, totality, or internal structure is assumed.
+\end{remark}
+
+\subsubsection{Axiom R0: Receipt canonicalization (normative)}
+
+\begin{definition}[Receipt canonicalization map]
+\label{def:canon}
+A \emph{canonicalization map} is a function
+\[
+\canon:R\to R.
+\]
+\end{definition}
+
+\begin{axiom}[R0: Idempotence of canonicalization]
+\label{ax:R0}
+For all $r\in R$,
+\[
+\canon(\canon(r))=\canon(r).
+\]
+\end{axiom}
+
+\begin{remark}
+R0 provides a minimal ``normalization'' operator for evidence objects. Further laws
+(e.g.\ compatibility with receipt merge) appear only when a merge operator is introduced.
+\end{remark}
+
+\subsubsection{Axiom T0: Trace soundness schema for composition (normative)}
+
+Systemics must be able to \emph{construct} traces of a composed process from traces of its components,
+but it treats the constructor kit as \emph{declared structure}, not implicit magic.
+
+\begin{definition}[Compatibility predicate (schema)]
+\label{def:compat-schema}
+A \emph{compatibility predicate} is any predicate
+\[
+\Compat \subseteq T^\star \times T^\star,
+\]
+written $\Compat(\tau_1,\tau_2)$, intended to mean ``$\tau_1$ and $\tau_2$ can be composed''.
+\end{definition}
+
+\begin{definition}[Trace composition constructor (schema)]
+\label{def:compose-schema}
+A \emph{trace composition constructor} is a partial function
+\[
+\Compose:\; T^\star \times T^\star \rightharpoonup T^\star
+\]
+such that $\Compose(\tau_1,\tau_2)$ is defined only when $\Compat(\tau_1,\tau_2)$ holds.
+\end{definition}
+
+\begin{axiom}[T0: Declared constructor soundness]
+\label{ax:T0}
+Whenever a Systemics instance declares $(\Compat,\Compose)$ to define a composition mode,
+it must satisfy the following \emph{soundness schema}:
+
+\medskip
+\noindent
+If $\tau_1\in\Exec_{K_1}$ and $\tau_2\in\Exec_{K_2}$ and $\Compat(\tau_1,\tau_2)$ holds,
+then $\Compose(\tau_1,\tau_2)$ is defined and yields a well-typed trace in $T^\star$.
+\end{axiom}
+
+\begin{remark}
+T0 does \emph{not} assert that any particular compatibility condition or constructor exists universally.
+It asserts that whenever the theory introduces composition, it does so by a declared kit that is well-typed.
+Concrete composition operators (sequential, parallel, branching) are introduced later as additional structure.
+\end{remark}
+
+\subsubsection{Axiom C0: Contract semantics (normative)}
+
+\begin{definition}[Contract]
+\label{def:contract}
+A \emph{contract} is a subset $\mathcal{C}\subseteq T^\star$ (equivalently, a predicate $\mathcal{C}(\tau)$).
+\end{definition}
+
+\begin{definition}[Conformance]
+\label{def:conformance}
+A kernel $K$ \emph{conforms} to a contract $\mathcal{C}$, written $K\models \mathcal{C}$, iff
+\[
+\Exec_K \subseteq \mathcal{C}.
+\]
+\end{definition}
+
+\begin{axiom}[C0: Contracts are trace-sets; conformance is inclusion]
+\label{ax:C0}
+Contracts are sets of traces (Definition~\ref{def:contract}) and conformance is subset inclusion
+(Definition~\ref{def:conformance}). No alternative conformance semantics is assumed at the core level.
+\end{axiom}
+
+\begin{remark}
+C0 is the core bridge between ``process'' and ``guarantee.'' Everything else in Systemics
+(e.g.\ composition preservation theorems, stability contracts, proof-carrying contracts)
+is built by defining new contracts and proving inclusion statements.
+\end{remark}
+
+\paragraph{Notes (normative stance).}
+Axioms~\ref{ax:K0}, \ref{ax:R0}, \ref{ax:T0}, and \ref{ax:C0} constitute the irreducible nucleus for the field
+as developed in this document. Everything else---composition operators, equivalence relations,
+rewriting/normal forms, evidence verification, stability, and capacity---is introduced as \emph{additional declared structure}
+with explicit definitions and axioms, never as hidden assumptions.
+
+\subsection{Chapter 4. The Process Algebra Object (normative)}
+\label{sec:partI-ch4}
+
+\paragraph{Goal.} Define what a \emph{Systemics process algebra instance} is.
+
+\subsubsection{Optional typed layer (normative)}
+
+\begin{definition}[Type carrier (optional)]
+\label{def:Ty}
+Optionally, let $\mathsf{Ty}$ be a set of \emph{types}.
+\end{definition}
+
+\begin{definition}[Typed kernel (optional)]
+\label{def:typed-kernel}
+If $\mathsf{Ty}$ is present, a kernel $K$ may be assigned a type (interface)
+\[
+K:A\to B \quad\text{with}\quad A,B\in \mathsf{Ty}.
+\]
+This typing is purely declarative at the core level; its operational meaning is induced by
+the declared compatibility predicate(s) and composition constructor(s) introduced below.
+\end{definition}
+
+\begin{remark}
+Typing is optional. When omitted, all kernels are treated as untyped elements of a class $\mathcal{K}$,
+and compatibility is expressed entirely at the trace level.
+\end{remark}
+
+\subsubsection{Signature of operators (normative)}
+
+\begin{definition}[Kernel carrier]
+\label{def:K-carrier}
+Let $\mathcal{K}$ be a class (or set) of kernels in the sense of Definition~\ref{def:kernel-primitive}.
+\end{definition}
+
+\begin{definition}[Sequential composition operator (signature)]
+\label{def:seq-signature}
+A \emph{sequential composition operator} is a binary operation on kernels
+\[
+\seqc:\mathcal{K}\times \mathcal{K}\to \mathcal{K},
+\]
+written $K_2\seqc K_1$.
+\end{definition}
+
+\begin{definition}[Parallel composition operator (optional signature)]
+\label{def:par-signature}
+Optionally, a \emph{parallel composition operator} is a binary operation
+\[
+\parc:\mathcal{K}\times \mathcal{K}\to \mathcal{K},
+\]
+written $K_1\parc K_2$.
+\end{definition}
+
+\begin{definition}[Identity kernel (optional signature)]
+\label{def:id-signature}
+Optionally, for each type $A\in\mathsf{Ty}$ (typed setting) or globally (untyped setting),
+there is a distinguished kernel $\mathrm{Id}$ (or $\mathrm{Id}_A$) intended as an identity for $\seqc$.
+\end{definition}
+
+\begin{remark}
+At this point these operators are just \emph{symbols with arities}. Their semantics is supplied
+by the composition kit below (via trace construction).
+\end{remark}
+
+\subsubsection{The composition kit (normative)}
+
+The core data that makes the operator symbols meaningful is a trace-level constructor kit.
+We package it explicitly.
+
+\begin{definition}[Composition kit]
+\label{def:composition-kit}
+A \emph{composition kit} is a tuple
+\[
+\mathfrak{K}_{\mathrm{kit}}=
+(\Compat_{\seq},\Compose_{\seq}\ ;\ \Compat_{\par},\Compose_{\par}\ ;\ \Compat_{\mathrm{Id}},\Compose_{\mathrm{Id}})
+\]
+consisting of:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item a sequential compatibility predicate $\Compat_{\seq}\subseteq T^\star\times T^\star$ and a partial constructor
+        $\Compose_{\seq}:T^\star\times T^\star \rightharpoonup T^\star$;
+  \item optionally, a parallel compatibility predicate $\Compat_{\par}$ and constructor $\Compose_{\par}$;
+  \item optionally, identity compatibility/constructor data $\Compat_{\mathrm{Id}}$ and $\Compose_{\mathrm{Id}}$,
+        sufficient to witness identity behavior at the trace level (e.g.\ by providing a canonical trace form).
+\end{itemize}
+Each declared constructor is required to satisfy the soundness schema (Axiom~\ref{ax:T0}) with its matching predicate.
+\end{definition}
+
+\begin{remark}
+The kit is where ``what it means to compose'' actually lives. All later composition theorems
+(conformance preservation, equivalence congruence, evidence closure) refer back to the kit.
+\end{remark}
+
+\subsubsection{Process algebra instance (key deliverable) (normative)}
+
+\begin{definition}[Systemics process algebra instance]
+\label{def:process-algebra-instance}
+A \emph{Systemics process algebra instance} is a tuple
+\[
+\mathfrak{P}=
+(\mathcal{K},\ \mathsf{Ty};\ \seqc,\ \parc,\ \mathrm{Id};\ \mathfrak{K}_{\mathrm{kit}})
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item $\mathcal{K}$ is a kernel carrier (Definition~\ref{def:K-carrier});
+  \item $\mathsf{Ty}$ is an optional type carrier (Definition~\ref{def:Ty});
+  \item $\seqc$ is a sequential operator (Definition~\ref{def:seq-signature});
+  \item $\parc$ is an optional parallel operator (Definition~\ref{def:par-signature});
+  \item $\mathrm{Id}$ is an optional identity kernel family (Definition~\ref{def:id-signature});
+  \item $\mathfrak{K}_{\mathrm{kit}}$ is a composition kit (Definition~\ref{def:composition-kit}).
+\end{itemize}
+Additionally, the instance must provide \emph{operator semantics} by specifying, for each declared operator,
+how the execution traces of the composite kernel are generated from component traces using the kit; minimally:
+
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Sequential semantics schema:} every trace of $K_2\seqc K_1$ is obtained by choosing
+        $\tau_1\in\Exec_{K_1}$ and $\tau_2\in\Exec_{K_2}$ with $\Compat_{\seq}(\tau_1,\tau_2)$ and setting
+        \[
+        \tau := \Compose_{\seq}(\tau_1,\tau_2)\in \Exec_{K_2\seqc K_1}.
+        \]
+  \item \textbf{Parallel semantics schema (if present):} analogously using $(\Compat_{\par},\Compose_{\par})$.
+  \item \textbf{Identity semantics schema (if present):} identity traces are witnessed by the declared identity kit.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:process-algebra-instance} is intentionally ``constructor-first'': it does not assume
+algebraic laws (associativity, identities, commutativity). Those become theorems or axioms in later parts
+(e.g.\ the equivalence and rewriting chapters) once observational equivalence is defined.
+\end{remark}
+
+\subsection{Chapter 5. Laws of Composition (normative)}
+\label{sec:partI-ch5}
+
+\paragraph{Goal.} The minimal equational basis for ``algebra of processes.''
+
+\subsubsection{Equivalence and its status (normative)}
+
+\begin{definition}[Kernel equivalence placeholder]
+\label{def:eq-placeholder}
+Fix a binary relation $\simeq\ \subseteq\ \mathcal{K}\times \mathcal{K}$ called \emph{kernel equivalence}.
+In this chapter, $\simeq$ is treated as a \emph{primitive judgment} whose induction principle is deferred.
+Later chapters either:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item \emph{derive} $\simeq$ from an observable semantics (e.g.\ trace views), or
+  \item \emph{adopt} $\simeq$ axiomatically as part of the algebraic presentation.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+This is the standard algebraic move: we may state the equational theory at the process-algebra level,
+and later justify it by semantics (soundness/completeness), or treat it as an axiomatic algebra
+whose models are semantics structures satisfying the laws.
+\end{remark}
+
+\subsubsection{Congruence laws (normative)}
+
+\begin{definition}[Congruence for an operator]
+\label{def:congruence}
+Let $\odot$ be a binary operator on $\mathcal{K}$. The relation $\simeq$ is a \emph{congruence} for $\odot$ if
+\[
+K_1\simeq K_1' \ \wedge\ K_2\simeq K_2' \quad \Rightarrow \quad (K_2\odot K_1)\simeq (K_2'\odot K_1').
+\]
+\end{definition}
+
+\begin{axiom}[L1: Congruence for sequential composition]
+\label{ax:L1-cong-seq}
+$\simeq$ is a congruence for $\seqc$ (Definition~\ref{def:congruence}).
+\end{axiom}
+
+\begin{axiom}[L2: Congruence for parallel composition (optional)]
+\label{ax:L2-cong-par}
+If $\parc$ is present, then $\simeq$ is a congruence for $\parc$.
+\end{axiom}
+
+\subsubsection{Associativity and identities up to equivalence (normative)}
+
+\begin{axiom}[L3: Associativity of $\seqc$ up to $\simeq$]
+\label{ax:L3-assoc-seq}
+For all kernels $K_1,K_2,K_3\in\mathcal{K}$,
+\[
+(K_3\seqc K_2)\seqc K_1 \ \simeq\ K_3\seqc (K_2\seqc K_1).
+\]
+\end{axiom}
+
+\begin{axiom}[L4: Identity laws for $\seqc$ up to $\simeq$ (recommended)]
+\label{ax:L4-id-seq}
+If $\mathrm{Id}$ (or $\mathrm{Id}_A$) is present, then for all kernels $K$ (and all compatible types when typed):
+\[
+K\seqc \mathrm{Id}\ \simeq\ K,
+\qquad
+\mathrm{Id}\seqc K\ \simeq\ K.
+\]
+\end{axiom}
+
+\begin{remark}
+Identity laws are recommended because they enable normalization rules that eliminate no-op stages.
+If identities are omitted, later chapters may still achieve a ``weak identity'' via normalization conventions,
+but the algebra becomes less canonical.
+\end{remark}
+
+\subsubsection{Optional monoidal laws for $\parc$ (normative if adopted)}
+
+If parallel composition is treated as a monoidal structure, record the laws explicitly.
+
+\begin{axiom}[L5: Associativity of $\parc$ up to $\simeq$ (optional)]
+\label{ax:L5-assoc-par}
+If $\parc$ is present, then for all $K_1,K_2,K_3$,
+\[
+(K_1\parc K_2)\parc K_3 \ \simeq\ K_1\parc (K_2\parc K_3).
+\]
+\end{axiom}
+
+\begin{axiom}[L6: Unit for $\parc$ up to $\simeq$ (optional)]
+\label{ax:L6-unit-par}
+If $\parc$ is present, there exists a distinguished unit kernel $\mathbf{1}$ such that for all $K$,
+\[
+K\parc \mathbf{1}\ \simeq\ K,
+\qquad
+\mathbf{1}\parc K\ \simeq\ K.
+\]
+\end{axiom}
+
+\begin{axiom}[L7: Symmetry/commutativity for $\parc$ up to $\simeq$ (optional)]
+\label{ax:L7-sym-par}
+If $\parc$ is present and intended as symmetric, then for all $K_1,K_2$,
+\[
+K_1\parc K_2 \ \simeq\ K_2\parc K_1.
+\]
+\end{axiom}
+
+\begin{remark}
+Whether $\parc$ should be symmetric is instance-dependent. Many domains require ordered parallel composition
+(e.g.\ when receipts record left/right provenance); in such cases omit L7 and later enforce a canonical ordering
+via normalization rather than symmetry.
+\end{remark}
+
+\subsubsection{A compact axiom table (output) (normative)}
+
+\begin{definition}[Composition law table]
+\label{def:law-table}
+A \emph{composition law table} for a process algebra instance $\mathfrak{P}$ (Definition~\ref{def:process-algebra-instance})
+is a selection of the axioms:
+\[
+\textbf{Laws}(\mathfrak{P}) \subseteq \{\text{L1},\text{L2},\text{L3},\text{L4},\text{L5},\text{L6},\text{L7}\},
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item L1 and L3 are the minimal sequential basis (congruence + associativity up to $\simeq$),
+  \item L4 is recommended (identities up to $\simeq$),
+  \item L2, L5--L7 are optional parallel/monoidal laws.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Later chapters either \emph{prove} the selected laws from semantics (e.g.\ by defining $\simeq$ observationally
+and showing congruence/associativity), or treat the law table as axioms and study the class of models (semantics)
+that satisfy them.
+\end{remark}
+
+\subsection{Chapter 6. Contract Algebra and Conformance Preservation (normative)}
+\label{sec:partI-ch6}
+
+\paragraph{Goal.} Make ``guarantees compose'' a theorem, not a slogan.
+
+\subsubsection{Induced contract operators (normative)}
+
+Let $\mathfrak{P}$ be a process algebra instance (Definition~\ref{def:process-algebra-instance}) with
+a declared composition kit $\mathfrak{K}_{\mathrm{kit}}$ (Definition~\ref{def:composition-kit}).
+Write $(\Compat_{\seq},\Compose_{\seq})$ for the sequential kit and (optionally)
+$(\Compat_{\par},\Compose_{\par})$ for the parallel kit.
+
+\begin{definition}[Sequential contract composition]
+\label{def:cseq}
+For contracts $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$, define the \emph{sequential contract composition}
+operator $\cseq$ by:
+\[
+\mathcal{C}_2 \cseq \mathcal{C}_1
+\ :=\
+\big\{\, \Compose_{\seq}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\seq}(\tau_1,\tau_2)\,\big\},
+\]
+where $\Compose_{\seq}(\tau_1,\tau_2)$ is understood to be defined whenever $\Compat_{\seq}(\tau_1,\tau_2)$ holds
+(as required by the constructor soundness schema, Axiom~\ref{ax:T0}).
+\end{definition}
+
+\begin{definition}[Parallel contract composition (optional)]
+\label{def:cpar}
+If $(\Compat_{\par},\Compose_{\par})$ is present, define the \emph{parallel contract composition}
+operator $\cpar$ by:
+\[
+\mathcal{C}_1 \cpar \mathcal{C}_2
+\ :=\
+\big\{\, \Compose_{\par}(\tau_1,\tau_2)\ :\ \tau_1\in \mathcal{C}_1,\ \tau_2\in \mathcal{C}_2,\ \Compat_{\par}(\tau_1,\tau_2)\,\big\}.
+\]
+\end{definition}
+
+\begin{remark}
+The contract operators are \emph{induced} by the same kit as kernel composition. This is the central design rule:
+\emph{the constructors that build composed traces are the constructors that build composed guarantees}.
+\end{remark}
+
+\subsubsection{Conformance preservation (normative)}
+
+\begin{theorem}[Sequential conformance preservation]
+\label{thm:seq-conformance-preservation}
+Let $K_1,K_2\in \mathcal{K}$ and let $\mathcal{C}_1,\mathcal{C}_2\subseteq T^\star$ be contracts.
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $K_1 \models \mathcal{C}_1$,
+  \item $K_2 \models \mathcal{C}_2$,
+  \item (\emph{compositional generation}) every trace of $K_2\seqc K_1$ arises from composing
+        a compatible pair of traces from $K_1$ and $K_2$ via the sequential constructor, i.e.:
+        \[
+        \forall \tau\in \Exec_{K_2\seqc K_1}\ \exists \tau_1\in \Exec_{K_1},\ \tau_2\in \Exec_{K_2}:
+        \Compat_{\seq}(\tau_1,\tau_2)\ \wedge\ \tau=\Compose_{\seq}(\tau_1,\tau_2).
+        \]
+\end{enumerate}
+Then:
+\[
+K_2\seqc K_1 \models (\mathcal{C}_2 \cseq \mathcal{C}_1).
+\]
+\end{theorem}
+
+\begin{proof}
+Let $\tau\in \Exec_{K_2\seqc K_1}$. By assumption (3), there exist $\tau_1\in\Exec_{K_1}$ and
+$\tau_2\in\Exec_{K_2}$ such that $\Compat_{\seq}(\tau_1,\tau_2)$ and $\tau=\Compose_{\seq}(\tau_1,\tau_2)$.
+From $K_1\models \mathcal{C}_1$ we have $\tau_1\in \mathcal{C}_1$, and from $K_2\models \mathcal{C}_2$ we have
+$\tau_2\in \mathcal{C}_2$. Therefore, by Definition~\ref{def:cseq},
+\[
+\tau=\Compose_{\seq}(\tau_1,\tau_2)\in \mathcal{C}_2\cseq \mathcal{C}_1.
+\]
+Since $\tau$ was arbitrary, $\Exec_{K_2\seqc K_1}\subseteq (\mathcal{C}_2\cseq \mathcal{C}_1)$, i.e.\
+$K_2\seqc K_1 \models (\mathcal{C}_2\cseq \mathcal{C}_1)$.
+\end{proof}
+
+\begin{theorem}[Parallel conformance preservation (optional)]
+\label{thm:par-conformance-preservation}
+If $\parc$ and $(\Compat_{\par},\Compose_{\par})$ are present and satisfy the analogous
+compositional generation property for $K_1\parc K_2$, then:
+\[
+K_1\models \mathcal{C}_1\ \wedge\ K_2\models \mathcal{C}_2
+\quad\Rightarrow\quad
+K_1\parc K_2 \models (\mathcal{C}_1\cpar \mathcal{C}_2).
+\]
+\end{theorem}
+
+\begin{proof}
+Identical structure to Theorem~\ref{thm:seq-conformance-preservation}, replacing $\seqc,\Compat_{\seq},\Compose_{\seq},\cseq$
+by $\parc,\Compat_{\par},\Compose_{\par},\cpar$.
+\end{proof}
+
+\subsubsection{Merge-closed contracts and closure corollaries (normative)}
+
+\begin{definition}[Merge-closed contract (sequential)]
+\label{def:merge-closed}
+A contract $\mathcal{C}\subseteq T^\star$ is \emph{merge-closed for sequential composition} if
+for all $\tau_1,\tau_2\in \mathcal{C}$,
+\[
+\Compat_{\seq}(\tau_1,\tau_2)\ \Rightarrow\ \Compose_{\seq}(\tau_1,\tau_2)\in \mathcal{C}.
+\]
+Equivalently, $\mathcal{C}\cseq \mathcal{C}\subseteq \mathcal{C}$.
+\end{definition}
+
+\begin{corollary}[Closure under sequential composition]
+\label{cor:closure-seq}
+If $\mathcal{C}$ is merge-closed (Definition~\ref{def:merge-closed}) and
+$K_1\models \mathcal{C}$ and $K_2\models \mathcal{C}$, then:
+\[
+K_2\seqc K_1 \models \mathcal{C}.
+\]
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:seq-conformance-preservation}, we have
+$K_2\seqc K_1 \models (\mathcal{C}\cseq \mathcal{C})$.
+By merge-closure, $\mathcal{C}\cseq \mathcal{C}\subseteq \mathcal{C}$, hence
+$K_2\seqc K_1 \models \mathcal{C}$.
+\end{proof}
+
+\begin{remark}
+Merge-closed contracts are the mechanism by which ``global invariants'' arise: you state one contract $\mathcal{C}$
+and prove it is closed under your composition kit. Then any pipeline built from conforming stages conforms globally.
+\end{remark}
+
+% ============================================================
+\section{Part III --- Semantics as Models (Execution, Replay, Observation)}
+
+```latex
+\subsection{Chapter 7. Execution Semantics (normative)}
+\label{sec:partIII-ch7}
+
+\paragraph{Goal.} Provide the canonical \emph{model class} for the algebra: relational execution semantics.
+
+\subsubsection{Relational execution semantics (normative)}
+
+\begin{definition}[Relational execution semantics]
+\label{def:exec-relational}
+Fix:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item an execution parameter set $T$,
+  \item an artifact universe $U$,
+  \item a context/envelope set $\Gamma$,
+  \item a valuation space $V$,
+  \item a decision space $2=\{0,1\}$,
+  \item a receipt space $R$,
+  \item (optionally) a capacity space $C$.
+\end{itemize}
+A kernel $K$ has \emph{relational execution semantics} given by a relation
+\[
+\Exec_K\ \subseteq\ (T\times U\times \Gamma)\times (U\times V\times 2\times R\times C\times \Gamma).
+\]
+We write
+\[
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma')
+\]
+iff $\big((t,u,\gamma),(u',v',d',r',c',\gamma')\big)\in \Exec_K$.
+\end{definition}
+
+\begin{remark}
+If the theory omits capacity $C$, simply drop the $c'$ coordinate and interpret
+\[
+\Exec_K\subseteq (T\times U\times\Gamma)\times (U\times V\times 2\times R\times \Gamma).
+\]
+\end{remark}
+
+\subsubsection{Deterministic semantics as a special case (normative)}
+
+\begin{definition}[Deterministic execution function]
+\label{def:exec-deterministic}
+A kernel $K$ is \emph{deterministic} (in this semantics) if $\Exec_K$ is single-valued in the output
+for each input. In that case, there exists a partial function
+\[
+\exec_K:\ T\times U\times \Gamma \rightharpoonup U\times V\times 2\times R\times C\times \Gamma
+\]
+such that
+\[
+\exec_K(t,u,\gamma)=(u',v',d',r',c',\gamma')
+\quad\Longleftrightarrow\quad
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma').
+\]
+\end{definition}
+
+\begin{remark}
+Relational semantics is the canonical model class because it accommodates nondeterminism
+(witness choice, admissible decompositions, underspecified joins) while remaining purely mathematical.
+Determinism is recovered as a property, not assumed.
+\end{remark}
+
+\subsubsection{Trace extraction (normative)}
+
+\begin{definition}[Trace induced by relational semantics]
+\label{def:trace-induced}
+Given a relation $\Exec_K$ as in Definition~\ref{def:exec-relational}, define the induced trace set
+(as an instance of the trace type $T^\star$):
+\[
+\widetilde{\Exec}_K\ :=\
+\big\{\, (t,u,\gamma;\ u',v',d',r',c',\gamma')\ :\ ((t,u,\gamma),(u',v',d',r',c',\gamma'))\in \Exec_K\,\big\}.
+\]
+\end{definition}
+
+\begin{remark}
+This makes explicit that the earlier ``kernel has traces'' view (Chapter~3) is recovered from
+the relational model by packaging input-output tuples into trace witnesses.
+\end{remark}
+
+\subsubsection{The model axiom: compositional semantics (normative)}
+
+Let $\mathfrak{P}$ be a process algebra instance with sequential operator $\seqc$ and sequential kit
+$(\Compat_{\seq},\Compose_{\seq})$ (Definition~\ref{def:composition-kit}).
+We now state the canonical \emph{model axiom} that makes the algebra semantic.
+
+\begin{axiom}[M0: Sequential semantics is relational composition via the kit]
+\label{ax:M0-seq}
+For all kernels $K_1,K_2\in\mathcal{K}$ and all inputs $(t,u,\gamma)\in T\times U\times \Gamma$,
+\[
+(t,u,\gamma)\xRightarrow{K_2\seqc K_1}(u_2,v_{21},d_{21},r_{21},c_{21},\gamma_2)
+\]
+iff there exist intermediate outputs $(u_1,v_1,d_1,r_1,c_1,\gamma_1)$ and stage outputs
+$(u_2,v_2,d_2,r_2,c_2,\gamma_2)$ such that:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $(t,u,\gamma)\xRightarrow{K_1}(u_1,v_1,d_1,r_1,c_1,\gamma_1)$,
+  \item $(t,u_1,\gamma_1)\xRightarrow{K_2}(u_2,v_2,d_2,r_2,c_2,\gamma_2)$,
+  \item letting
+  \[
+  \tau_1=(t,u,\gamma;\ u_1,v_1,d_1,r_1,c_1,\gamma_1),\qquad
+  \tau_2=(t,u_1,\gamma_1;\ u_2,v_2,d_2,r_2,c_2,\gamma_2),
+  \]
+  we have $\Compat_{\seq}(\tau_1,\tau_2)$,
+  \item and the composite output components $(v_{21},d_{21},r_{21},c_{21})$ are exactly those prescribed by the constructor
+  \[
+  \tau_{21} := \Compose_{\seq}(\tau_1,\tau_2)\in T^\star.
+  \]
+\end{enumerate}
+Equivalently: the semantics of $K_2\seqc K_1$ is the relational composition of $\Exec_{K_1}$ and $\Exec_{K_2}$
+\emph{factored through} the declared trace constructor.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:M0-seq} is the semantic counterpart of the ``compositional generation'' assumption used in
+conformance preservation (Chapter~6). Once M0 is adopted, those preservation theorems become theorems
+about the model class rather than extra assumptions.
+\end{remark}
+
+\begin{axiom}[M1: Parallel semantics via the kit (optional)]
+\label{ax:M1-par}
+If $\parc$ and a parallel kit $(\Compat_{\par},\Compose_{\par})$ are present, then $\Exec_{K_1\parc K_2}$
+is defined by the analogous relational product/join construction using $\Compose_{\par}$.
+\end{axiom}
+```
+
+\subsection{Chapter 8. Replay and Verification Skeleton (normative)}
+\label{sec:partIII-ch8}
+
+\paragraph{Goal.} Define replay/verification \emph{mathematically} without committing to implementation.
+
+\subsubsection{Receipt canonicalization and binding (normative)}
+
+\begin{definition}[Receipt canonicalization]
+\label{def:canon}
+A \emph{canonicalization map} is a function
+\[
+\canon:R\to R.
+\]
+\end{definition}
+
+\begin{axiom}[R0: Canonicalization idempotence]
+\label{ax:R0-idem}
+For all $r\in R$,
+\[
+\canon(\canon(r))=\canon(r).
+\]
+\end{axiom}
+
+\begin{definition}[Envelope binding (partial)]
+\label{def:bind}
+An \emph{envelope binding map} is a partial function
+\[
+\bind:R \rightharpoonup \Gamma,
+\]
+intended to recover (at least) the effective regime/epoch from a receipt.
+\end{definition}
+
+\begin{axiom}[B0: Binding coherence with execution]
+\label{ax:B0-bind-coh}
+There exists a designated set of \emph{binding fields} of envelopes (instance-defined) such that:
+for every execution witness
+\[
+(t,u,\gamma)\xRightarrow{K}(u',v',d',r',c',\gamma'),
+\]
+the value $\bind(\canon(r'))$ is defined and agrees with $\gamma$ on the declared binding fields.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:B0-bind-coh} does \emph{not} require $\bind(\canon(r'))=\gamma$ in full; it requires agreement on
+those components the theory declares to be binding-relevant (e.g.\ epoch, policy-id, regime tag, version).
+\end{remark}
+
+\subsubsection{Replay relation (normative)}
+
+\begin{definition}[Replay relation (partial)]
+\label{def:replay-rel}
+A \emph{replay relation} is a relation
+\[
+\Replay\ \subseteq\ (R\times U)\times (V\times 2).
+\]
+We write
+\[
+(r,u)\Replay (v,d)
+\]
+to mean: ``replaying receipt $r$ on artifact $u$ yields valuation $v$ and decision $d$.''
+
+Replay is allowed to be partial: for some $(r,u)$ there may be no related $(v,d)$.
+\end{definition}
+
+\begin{remark}
+Replay is intentionally detached from kernel internals. It is a mathematical relation that
+connects (receipt, artifact) pairs to (valuation, decision) outputs.
+\end{remark}
+
+\subsubsection{Verification predicate (minimum interface) (normative)}
+
+\begin{definition}[Verification predicate (minimum interface)]
+\label{def:verify-min}
+A \emph{verification predicate} is a map returning a decision bit:
+\[
+\Verify:\ R\times U\times \Gamma \times \ThetaSpace \times \BetaSpace \times C \ \to\ 2,
+\]
+where $\ThetaSpace$ and $\BetaSpace$ are the carriers for floor settings and invariance budgets (when present).
+In contexts where $(\Theta,\beta,C)$ are not explicit, the corresponding arguments may be omitted, yielding the minimal form:
+\[
+\Verify:\ R\times U\times \Gamma \to 2.
+\]
+\end{definition}
+
+\begin{remark}
+The purpose of $\Verify$ here is not to prescribe \emph{how} verification is done, but to insist that
+verification is a well-typed mathematical judgment, potentially parameterized by envelope and targets.
+\end{remark}
+
+\subsubsection{Minimal theorem targets (normative)}
+
+\begin{definition}[Replay determinism on a domain]
+\label{def:replay-det-domain}
+Let $D\subseteq R\times U$. Replay is \emph{deterministic on $D$} if for all $(r,u)\in D$:
+\[
+(r,u)\Replay(v_1,d_1)\ \wedge\ (r,u)\Replay(v_2,d_2)
+\quad\Rightarrow\quad
+(v_1,d_1)=(v_2,d_2).
+\]
+\end{definition}
+
+\begin{theorem}[Replay determinism under canonical receipts (target)]
+\label{thm:replay-det-canon}
+Assume there exists a domain $D\subseteq R\times U$ such that:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item (\emph{canonical definedness}) for all $(r,u)\in D$, there exists $(v,d)$ with $(\canon(r),u)\Replay(v,d)$;
+  \item (\emph{canonical determinism}) replay is deterministic on $\{(\canon(r),u):(r,u)\in D\}$ in the sense of
+        Definition~\ref{def:replay-det-domain}.
+\end{enumerate}
+Then canonical receipts support deterministic replay on $D$: for all $(r,u)\in D$ there exists a unique $(v,d)$ with
+\[
+(\canon(r),u)\Replay(v,d).
+\]
+\end{theorem}
+
+\begin{proof}
+By (1) replay is defined on $(\canon(r),u)$ for each $(r,u)\in D$; by (2) any two replay outcomes must be equal,
+so the outcome is unique.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:replay-det-canon} is phrased as a \emph{target} because the sufficient hypotheses are instance-dependent.
+Many instances enforce it by designing receipts whose canonical form fixes all replay-relevant choices.
+\end{remark}
+
+\subsection{Chapter 9. Observables and Induced Equivalence (normative)}
+\label{sec:partIII-ch9}
+
+\paragraph{Goal.} Define \emph{what counts as the same process} for refactoring.
+
+\subsubsection{Observable carrier and view map (normative)}
+
+\begin{definition}[Observable carrier]
+\label{def:obs-carrier}
+An \emph{observable carrier} is a set $\mathcal{O}$ whose elements represent the externally relevant view of traces.
+\end{definition}
+
+\begin{definition}[Observable view map]
+\label{def:cview}
+An \emph{observable view map} is a function
+\[
+\cview:\ T^\star \to \mathcal{O}.
+\]
+\end{definition}
+
+\begin{remark}
+$\cview$ is the formal ``information boundary.'' It specifies what is visible to equivalence.
+For example, $\cview$ may:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item forget raw receipts and retain only canonical digests,
+  \item forget intermediate states and retain only input/output summaries,
+  \item include envelope binding fields but omit non-binding fields.
+\end{itemize}
+All such choices are mathematical and instance-declared.
+\end{remark}
+
+\subsubsection{Trace equivalence induced by observables (normative)}
+
+\begin{definition}[Trace observational equivalence]
+\label{def:trace-eq}
+For traces $\tau,\tilde{\tau}\in T^\star$, define
+\[
+\tau \approx \tilde{\tau}
+\quad:\Longleftrightarrow\quad
+\cview(\tau)=\cview(\tilde{\tau}).
+\]
+\end{definition}
+
+\begin{lemma}[$\approx$ is an equivalence relation]
+\label{lem:trace-eq-rel}
+The relation $\approx$ is reflexive, symmetric, and transitive.
+\end{lemma}
+
+\begin{proof}
+Immediate from the fact that $=$ on $\mathcal{O}$ is an equivalence relation and $\approx$ is defined as equality of images under $\cview$.
+\end{proof}
+
+\subsubsection{Kernel equivalence induced by trace matching (normative)}
+
+Recall that in the relational model class (Chapter~7), for each kernel $K$ the semantics $\Exec_K$ induces a set of traces
+$\widetilde{\Exec}_K\subseteq T^\star$ (Definition~\ref{def:trace-induced}).
+For notational convenience, write
+\[
+\Exec^\star_K := \widetilde{\Exec}_K.
+\]
+
+\begin{definition}[Kernel observational equivalence induced by $\approx$]
+\label{def:kernel-eq}
+Two kernels $K$ and $K'$ are \emph{observationally equivalent} (written $K\simeq K'$) if for all execution inputs $(t,u,\gamma)$:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item for every trace $\tau\in \Exec^\star_K$ with $\mathrm{in}(\tau)=(t,u,\gamma)$, there exists a trace
+        $\tilde{\tau}\in \Exec^\star_{K'}$ with $\mathrm{in}(\tilde{\tau})=(t,u,\gamma)$ such that $\tau\approx \tilde{\tau}$;
+  \item conversely, for every trace $\tilde{\tau}\in \Exec^\star_{K'}$ with input $(t,u,\gamma)$, there exists
+        $\tau\in \Exec^\star_K$ with the same input such that $\tau\approx \tilde{\tau}$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:kernel-eq} is a bisimulation-style equivalence on \emph{sets of observable traces}.
+If kernels are deterministic, then for each input there is (at most) one trace, and $K\simeq K'$ reduces to equality of observable views for that trace.
+\end{remark}
+
+\subsubsection{$\simeq$ is an equivalence relation (normative)}
+
+\begin{theorem}[$\simeq$ is an equivalence relation]
+\label{thm:kernel-eq-rel}
+The relation $\simeq$ is reflexive, symmetric, and transitive.
+\end{theorem}
+
+\begin{proof}
+Reflexive: for any $K$, match each trace to itself; since $\approx$ is reflexive (Lemma~\ref{lem:trace-eq-rel}), the witness exists.
+Symmetric: the definition is symmetric by swapping $K$ and $K'$.
+Transitive: assume $K\simeq K'$ and $K'\simeq K''$. Fix an input $(t,u,\gamma)$ and a trace $\tau$ of $K$ at that input.
+By $K\simeq K'$, there exists $\tau'$ of $K'$ at the same input with $\tau\approx \tau'$.
+By $K'\simeq K''$, there exists $\tau''$ of $K''$ at the same input with $\tau'\approx \tau''$.
+By transitivity of $\approx$ (Lemma~\ref{lem:trace-eq-rel}), $\tau\approx \tau''$. The reverse direction is analogous.
+\end{proof}
+
+\subsubsection{Compositional observables and congruence (normative)}
+
+To ensure refactoring is stable under composition, we require that observables respect the composition kit.
+
+\begin{definition}[Compositional observable view (sequential)]
+\label{def:obs-compositional}
+The observable view $\cview$ is \emph{sequentially compositional} if there exists a (partial) operator
+\[
+\odot_{\seq}:\ \mathcal{O}\times \mathcal{O} \rightharpoonup \mathcal{O}
+\]
+such that whenever $\Compat_{\seq}(\tau_1,\tau_2)$ holds and $\tau_{21}=\Compose_{\seq}(\tau_1,\tau_2)$ is defined,
+we have
+\[
+\cview(\tau_{21}) \ =\ \cview(\tau_2)\ \odot_{\seq}\ \cview(\tau_1).
+\]
+\end{definition}
+
+\begin{remark}
+This is the formal statement of ``observables compose by the same recipe.'' In many instances,
+$\odot_{\seq}$ is induced by canonicalization and merge on the observed components (e.g.\ receipt digests, capacity witnesses, envelope bindings).
+\end{remark}
+
+\begin{theorem}[Congruence of $\simeq$ for $\seqc$ under compositional observables]
+\label{thm:congruence-seq}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the model axiom M0 holds (Axiom~\ref{ax:M0-seq}),
+  \item the observable view is sequentially compositional (Definition~\ref{def:obs-compositional}).
+\end{enumerate}
+Then $\simeq$ is a congruence for sequential composition:
+\[
+K_1\simeq K_1'\ \wedge\ K_2\simeq K_2'
+\quad\Rightarrow\quad
+K_2\seqc K_1 \ \simeq\ K_2'\seqc K_1'.
+\]
+\end{theorem}
+
+\begin{proof}
+Fix an input $(t,u,\gamma)$ and let $\tau$ be any trace of $K_2\seqc K_1$ at that input.
+By M0 (Axiom~\ref{ax:M0-seq}), $\tau=\Compose_{\seq}(\tau_1,\tau_2)$ for some compatible stage traces
+$\tau_1$ of $K_1$ (at $(t,u,\gamma)$) and $\tau_2$ of $K_2$ (at $(t,u_1,\gamma_1)$ as dictated by $\tau_1$),
+with $\Compat_{\seq}(\tau_1,\tau_2)$.
+
+Because $K_1\simeq K_1'$, there exists a trace $\tilde{\tau}_1$ of $K_1'$ matching $\tau_1$ up to $\approx$.
+Because $K_2\simeq K_2'$, there exists a trace $\tilde{\tau}_2$ of $K_2'$ matching $\tau_2$ up to $\approx$.
+(Here the inputs match as required because $\approx$ equates observable inputs, and the kit-defined compatibility uses declared interface fields.)
+
+Form the composed trace $\tilde{\tau} := \Compose_{\seq}(\tilde{\tau}_1,\tilde{\tau}_2)$ for $K_2'\seqc K_1'$.
+By compositionality of $\cview$ (Definition~\ref{def:obs-compositional}),
+\[
+\cview(\tau) = \cview(\tau_2)\odot_{\seq}\cview(\tau_1)
+\quad\text{and}\quad
+\cview(\tilde{\tau}) = \cview(\tilde{\tau}_2)\odot_{\seq}\cview(\tilde{\tau}_1).
+\]
+Since $\tau_1\approx \tilde{\tau}_1$ and $\tau_2\approx \tilde{\tau}_2$, we have
+$\cview(\tau_1)=\cview(\tilde{\tau}_1)$ and $\cview(\tau_2)=\cview(\tilde{\tau}_2)$, hence $\cview(\tau)=\cview(\tilde{\tau})$,
+i.e.\ $\tau\approx \tilde{\tau}$. The reverse direction is symmetric. Therefore $K_2\seqc K_1 \simeq K_2'\seqc K_1'$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:congruence-seq} is the precise bridge from semantics to the algebraic law L1 (Chapter~5):
+it shows congruence is not merely postulated but can be derived from the relational model axiom plus compositional observables.
+\end{remark}
+
+% ============================================================
+\section{Part IV --- Calculus: Rewriting and Normal Forms}
+
+```latex
+\subsection{Chapter 10. Syntax of Pipelines (normative)}
+\label{sec:partIV-ch10}
+
+\paragraph{Goal.} Introduce expressions so we can do algebraic rewriting.
+
+\subsubsection{Expression language (syntax) (normative)}
+
+\begin{definition}[Atomic kernel symbols]
+\label{def:atomic-kernels}
+Let $\mathcal{K}_0$ be a set of \emph{atomic kernel symbols}. Elements of $\mathcal{K}_0$ are syntactic names (not semantics).
+\end{definition}
+
+\begin{definition}[Pipeline expression grammar]
+\label{def:expr-grammar}
+Define the set of \emph{pipeline expressions} $\mathcal{E}$ inductively by:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item (\textbf{atoms}) if $K\in\mathcal{K}_0$ then $K\in\mathcal{E}$;
+  \item (\textbf{sequential}) if $E_1,E_2\in\mathcal{E}$ then $(E_2\seqc E_1)\in\mathcal{E}$;
+  \item (\textbf{parallel}) if $E_1,E_2\in\mathcal{E}$ then $(E_1\parc E_2)\in\mathcal{E}$;
+  \item (\textbf{branch}) if $E_L,E_R\in\mathcal{E}$ and $s$ is a selector (instance-declared),
+        then $\mathrm{branch}(E_L,E_R,s)\in\mathcal{E}$.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The symbols $\seqc,\parc,\mathrm{branch}$ are \emph{syntactic constructors} in this chapter.
+Their meaning is assigned by interpretation (next subsection) using the process algebra instance (Chapter~4) and the semantic model (Chapter~7).
+\end{remark}
+
+\subsubsection{Interpretation into kernels/semantics (normative)}
+
+\begin{definition}[Interpretation function]
+\label{def:interp}
+An \emph{interpretation} is a function
+\[
+\llbracket\cdot\rrbracket:\ \mathcal{E}\to \mathcal{K},
+\]
+mapping expressions to (semantic) kernels in the ambient Systemics process algebra instance.
+It is defined structurally by:
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item $\llbracket K\rrbracket := K$ for $K\in\mathcal{K}_0\subseteq \mathcal{K}$ (atoms denote kernels);
+  \item $\llbracket E_2\seqc E_1\rrbracket := \llbracket E_2\rrbracket \seqc \llbracket E_1\rrbracket$;
+  \item $\llbracket E_1\parc E_2\rrbracket := \llbracket E_1\rrbracket \parc \llbracket E_2\rrbracket$;
+  \item $\llbracket \mathrm{branch}(E_L,E_R,s)\rrbracket := \mathrm{branch}(\llbracket E_L\rrbracket,\llbracket E_R\rrbracket,s)$,
+        where $\mathrm{branch}(\cdot)$ is the (optional) branching operator from the composition kit.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:interp} makes the expression language a \emph{free} syntax generated by $\mathcal{K}_0$
+and the constructors, with semantics supplied by the chosen algebra instance.
+\end{remark}
+
+\subsubsection{Semantic meaning of an expression (normative)}
+
+\begin{definition}[Expression semantics via relational execution]
+\label{def:expr-semantics}
+Given the relational execution semantics $\Exec_K$ for each kernel (Chapter~7), define the semantics of an expression $E\in\mathcal{E}$ by:
+\[
+\Exec_E \ :=\ \Exec_{\llbracket E\rrbracket}.
+\]
+Equivalently, the traces of $E$ are the traces of $\llbracket E\rrbracket$.
+\end{definition}
+
+\begin{remark}
+This definition is intentionally minimal: rewriting acts on expressions, while correctness is stated in terms of
+kernel equivalence $\simeq$ (Chapter~9) applied to $\llbracket\cdot\rrbracket$.
+\end{remark}
+
+\subsection{Chapter 11. Rewrite System and Normal Forms (normative)}
+\label{sec:partIV-ch11}
+
+\paragraph{Goal.} Make refactoring $=$ rewriting-to-normal-form.
+
+\subsubsection{Rewrite system (normative)}
+
+\begin{definition}[Rewrite system on expressions]
+\label{def:rewrite-system}
+A \emph{rewrite system} is a binary relation $\Rewrite \ \subseteq\ \mathcal{E}\times \mathcal{E}$.
+We write $E\Rewrite E'$ for a single rewrite step and define its reflexive-transitive closure
+$E\RewriteStar E'$ as ``zero or more steps.''
+\end{definition}
+
+\begin{definition}[Rewrite soundness condition]
+\label{def:rewrite-sound}
+A rewrite system is \emph{sound} (with respect to induced kernel equivalence $\simeq$; Chapter~9) if every rule preserves semantics up to $\simeq$:
+\[
+E\Rewrite E' \quad\Rightarrow\quad \llbracket E\rrbracket \simeq \llbracket E'\rrbracket.
+\]
+\end{definition}
+
+\begin{remark}
+Soundness is the formal statement that a rewrite is a \emph{refactoring}: it changes syntax but not the process, up to the declared observational boundary.
+\end{remark}
+
+\subsubsection{Canonical rule families (normative)}
+
+This chapter fixes a minimal, portable set of rule families. Any Systemics theory instance must
+either adopt these rules or explicitly declare replacements.
+
+\paragraph{(R1) Sequential reassociation.}
+\[
+(E_3\seqc E_2)\seqc E_1 \Rewrite E_3\seqc (E_2\seqc E_1).
+\]
+
+\paragraph{(R2) Parallel reassociation (optional).}
+If $\parc$ is present:
+\[
+(E_1\parc E_2)\parc E_3 \Rewrite E_1\parc (E_2\parc E_3).
+\]
+
+\paragraph{(R3) Identity elimination (optional but recommended).}
+If an identity $\mathrm{Id}$ is present:
+\[
+E\seqc \mathrm{Id} \Rewrite E,
+\qquad
+\mathrm{Id}\seqc E \Rewrite E.
+\]
+
+\paragraph{(R4) Parallel commutation to a canonical order (optional).}
+If $\parc$ is commutative up to $\simeq$, choose a total preorder key $\kappa:\mathcal{E}\to \mathsf{Key}$ and impose:
+\[
+E_1\parc E_2 \Rewrite
+\begin{cases}
+E_1\parc E_2 & \text{if }\kappa(E_1)\le \kappa(E_2),\\
+E_2\parc E_1 & \text{otherwise.}
+\end{cases}
+\]
+
+\begin{remark}
+Rules (R1)--(R4) correspond to the algebraic law table (Chapter~5). Their soundness depends on:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item associativity/unit/symmetry laws holding \emph{up to} $\simeq$,
+  \item $\simeq$ being a congruence for the relevant operators (Chapter~9).
+\end{itemize}
+\end{remark}
+
+\subsubsection{Normal forms and normalization (normative)}
+
+\begin{definition}[Normal form predicate]
+\label{def:NF}
+A \emph{normal form predicate} is a predicate $\NF(\cdot)$ on $\mathcal{E}$ intended to characterize irreducible (canonical) expressions.
+\end{definition}
+
+\begin{definition}[Normalization function]
+\label{def:Norm}
+A \emph{normalization function} is a map
+\[
+\Norm:\ \mathcal{E}\to \mathcal{E}
+\]
+such that $\NF(\Norm(E))$ holds for all $E\in\mathcal{E}$.
+\end{definition}
+
+\begin{remark}
+Normalization is the mathematical form of ``canonical refactoring.'' It produces a representative of an equivalence class of pipelines.
+\end{remark}
+
+\subsubsection{Soundness of normalization (normative)}
+
+\begin{theorem}[Normalization soundness]
+\label{thm:norm-sound}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the rewrite system is sound (Definition~\ref{def:rewrite-sound}),
+  \item the induced kernel equivalence $\simeq$ is a congruence for the expression constructors (Chapter~9),
+  \item for every $E$, there exists a derivation $E \RewriteStar \Norm(E)$.
+\end{enumerate}
+Then for all $E\in\mathcal{E}$,
+\[
+\llbracket E\rrbracket \ \simeq\ \llbracket \Norm(E)\rrbracket.
+\]
+\end{theorem}
+
+\begin{proof}
+By assumption (3), there is a finite chain
+\[
+E=E_0 \Rewrite E_1 \Rewrite \cdots \Rewrite E_n=\Norm(E).
+\]
+By rewrite soundness, for each step $E_i\Rewrite E_{i+1}$ we have
+$\llbracket E_i\rrbracket \simeq \llbracket E_{i+1}\rrbracket$.
+By transitivity of $\simeq$ (Theorem~\ref{thm:kernel-eq-rel}), the endpoints satisfy
+$\llbracket E\rrbracket \simeq \llbracket \Norm(E)\rrbracket$.
+\end{proof}
+
+\begin{corollary}[Normalization idempotence (recommended)]
+\label{cor:norm-idem}
+If $\Norm$ is defined to act as the identity on normal forms (i.e.\ $\NF(E)\Rightarrow \Norm(E)=E$), then
+\[
+\Norm(\Norm(E))=\Norm(E)
+\quad\text{for all }E.
+\]
+\end{corollary}
+
+\begin{proof}
+Since $\Norm(E)$ is a normal form by Definition~\ref{def:Norm}, apply the identity-on-normal-forms property.
+\end{proof}
+
+\subsubsection{Optional strengthening: uniqueness of normal forms (normative option)}
+
+\begin{definition}[Unique normal forms]
+\label{def:UNF}
+A rewrite system has \emph{unique normal forms} if whenever $E\RewriteStar E_1$ and $E\RewriteStar E_2$
+and $\NF(E_1)$ and $\NF(E_2)$, then $E_1=E_2$.
+\end{definition}
+
+\begin{theorem}[Termination + confluence implies uniqueness (standard)]
+\label{thm:term-confl-unique}
+If the rewrite system is terminating and confluent, then it has unique normal forms (Definition~\ref{def:UNF}).
+\end{theorem}
+
+\begin{remark}
+A Systemics theory may adopt uniqueness in one of three ways:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item prove termination+confluence for the chosen rule set,
+  \item restrict to a rule subset where these properties are easy,
+  \item or adopt unique normal forms as an explicit axiom (useful early, but less satisfying).
+\end{itemize}
+\end{remark}
+
+% ============================================================
+\section{Part V --- Enrichments: Stability, Capacity, Evidence}
+
+\subsection{Chapter 12. Stability Enrichment (normative)}
+\label{sec:partV-ch12}
+
+\paragraph{Goal.} Enrich the core process algebra with a rigorous robustness layer: probes, wobble, and invariance budgets.
+This chapter adds \emph{stability structure} as additional data and laws, never as hidden assumptions.
+
+\subsubsection{Probe structure (normative)}
+
+\begin{definition}[Probe family]
+\label{def:probe-family}
+A \emph{probe} is a function $p:U\to U$. A \emph{probe family} is a designated set
+\[
+\Probe_U \subseteq U^U.
+\]
+\end{definition}
+
+\begin{axiom}[P0: Identity probe]
+\label{ax:P0-probe-id}
+$\mathrm{id}_U\in \Probe_U$.
+\end{axiom}
+
+\begin{axiom}[P1: Closure under composition (optional)]
+\label{ax:P1-probe-comp}
+If $p,q\in \Probe_U$, then $p\circ q\in \Probe_U$.
+\end{axiom}
+
+\begin{remark}
+Envelope-aware probes may be adopted by replacing $p:U\to U$ with $p:U\times \Gamma \to U$ (or $p:T\times U\times\Gamma\to U$),
+but artifact-level probes are the minimal portable choice.
+\end{remark}
+
+\subsubsection{Wobble space and wobble map (normative)}
+
+\begin{definition}[Wobble space]
+\label{def:wobble-space}
+A \emph{wobble space} is a poset $(W,\preceq)$ with a least element $0_W$.
+Elements of $W$ are \emph{wobble magnitudes}.
+\end{definition}
+
+\begin{definition}[Wobble map (valuation-level)]
+\label{def:wobble-map}
+A \emph{wobble map} is a function
+\[
+\Wob:\ V\times V \to W.
+\]
+(Optionally, one may instead define $\Wob$ on observables $\mathcal{O}\times\mathcal{O}$; the choice must be declared.)
+\end{definition}
+
+\begin{definition}[Invariance budget]
+\label{def:beta}
+An \emph{invariance budget} is an element $\beta\in W$.
+We write $v\sim_\beta v'$ to mean $\Wob(v,v')\preceq \beta$.
+\end{definition}
+
+\begin{remark}
+This chapter treats $\beta$ as a parameter of robustness claims. Later chapters may relate $\beta$ to capacity (Chapter~13) or evidence (Chapter~14).
+\end{remark}
+
+\subsubsection{Stability judgments (normative)}
+
+\begin{definition}[Trace valuation/decision projections]
+\label{def:trace-proj-stab}
+For a trace $\tau=(t,u,\gamma;u',v,d,r,c,\gamma')\in T^\star$, define
+\[
+\Val(\tau):=v,\qquad \Dec(\tau):=d,
+\]
+and let $\In(\tau):=(t,u,\gamma)$ denote its input triple.
+\end{definition}
+
+\begin{definition}[Decision stability at an input]
+\label{def:stab-at-input}
+Fix a kernel $K$, an input $(t,u,\gamma)$, a probe family $\Probe_U$, and a budget $\beta\in W$.
+We say \emph{$K$ is decision-stable at $(t,u,\gamma)$ under $(\Probe_U,\beta)$} if:
+\[
+\forall p\in \Probe_U,\
+\forall \tau\in \Exec^\star_K\ \forall \tau_p\in \Exec^\star_K:
+\Big(\In(\tau)=(t,u,\gamma)\ \wedge\ \In(\tau_p)=(t,p(u),\gamma)\Big)
+\Rightarrow
+\Big(\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta\ \Rightarrow\ \Dec(\tau)=\Dec(\tau_p)\Big).
+\]
+\end{definition}
+
+\begin{remark}
+Definition~\ref{def:stab-at-input} is robust to nondeterminism by quantifying over \emph{all} traces at each probed input.
+For deterministic semantics, each quantification ranges over at most one trace.
+\end{remark}
+
+\subsubsection{Gate regularity (minimal sufficient conditions) (normative option)}
+
+To obtain usable theorems, we isolate minimal regularity of the decision rule. This is optional but recommended.
+
+\begin{definition}[Margin regularity (optional)]
+\label{def:margin}
+A \emph{margin function} is a map
+\[
+m:\ V\times \ThetaSpace \to W
+\]
+such that for all $v,v'\in V$ and all floors $\Theta\in\ThetaSpace$,
+\[
+\Wob(v,v') \prec m(v,\Theta)\ \Rightarrow\ \chi(v,\Theta,\beta)=\chi(v',\Theta,\beta),
+\]
+for the gate $\chi$ from the kernel contract (Part I) and any admissible $\beta$ (instance-declared).
+\end{definition}
+
+\begin{remark}
+This abstracts the standard ``classification margin'' idea: perturbations smaller than the margin cannot flip the decision.
+\end{remark}
+
+\subsubsection{Core theorem template (normative target)}
+
+\begin{theorem}[Stability bound via wobble budget (template)]
+\label{thm:stab-bound-template}
+Fix $K,\Theta,\gamma$ and assume a margin function $m$ exists (Definition~\ref{def:margin}).
+Let $(t,u,\gamma)$ be an input. Suppose that for some $\beta\in W$ and probe family $\Probe_U$:
+\[
+\forall p\in \Probe_U,\
+\forall \tau,\tau_p\in \Exec^\star_K:
+\Big(\In(\tau)=(t,u,\gamma)\ \wedge\ \In(\tau_p)=(t,p(u),\gamma)\Big)
+\Rightarrow
+\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta,
+\]
+and additionally $\beta \prec m(\Val(\tau),\Theta)$ for all relevant $\tau$ at $(t,u,\gamma)$.
+Then $K$ is decision-stable at $(t,u,\gamma)$ under $(\Probe_U,\beta)$ (Definition~\ref{def:stab-at-input}).
+\end{theorem}
+
+\begin{proof}
+Let $p\in\Probe_U$ and choose traces $\tau,\tau_p$ with the required inputs. By hypothesis,
+$\Wob(\Val(\tau),\Val(\tau_p))\preceq \beta \prec m(\Val(\tau),\Theta)$.
+By margin regularity, the gate outcome cannot change between $\Val(\tau)$ and $\Val(\tau_p)$, hence
+$\Dec(\tau)=\Dec(\tau_p)$.
+\end{proof}
+
+\subsubsection{Stability as a contract (normative)}
+
+\begin{definition}[Stability contract]
+\label{def:stab-contract}
+Fix $(\Probe_U,\beta)$ and define the \emph{stability contract} $\mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)\subseteq T^\star$ by:
+\[
+\tau\in \mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)
+\quad:\Longleftrightarrow\quad
+\text{$K$ is decision-stable at $\In(\tau)$ under $(\Probe_U,\beta)$ in the sense of Definition~\ref{def:stab-at-input}.}
+\]
+\end{definition}
+
+\begin{remark}
+By Chapter~6, once stability is phrased as a contract, it becomes composable: you can require stability stage-wise or end-to-end,
+depending on how you choose to lift stability requirements through $\cseq$ (and $\cpar$).
+\end{remark}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the stability enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a probe family $\Probe_U$ and at least Axiom~\ref{ax:P0-probe-id},
+  \item a wobble space $(W,\preceq,0_W)$ and wobble map $\Wob$,
+  \item the meaning of budgets $\beta\in W$ and the stability judgment (Definition~\ref{def:stab-at-input}),
+  \item (recommended) a gate regularity notion (e.g.\ margin regularity) and the stability theorem template (Theorem~\ref{thm:stab-bound-template}),
+  \item the stability contract $\mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta)$.
+\end{enumerate}
+
+\subsection{Chapter 13. Capacity Enrichment (normative)}
+\label{sec:partV-ch13}
+
+\paragraph{Goal.} Treat resources as first-class and compose feasibility.
+
+\subsubsection{Capacity space and cost semantics (normative)}
+
+\begin{definition}[Capacity space]
+\label{def:cap-space}
+A \emph{capacity space} is a poset $(C,\preceq)$ with least element $0_C$.
+We interpret $c_1\preceq c_2$ as ``$c_2$ admits at least as much resource as $c_1$'' \emph{or}
+``$c_1$ uses no more resource than $c_2$,'' depending on the adopted convention.
+\end{definition}
+
+\begin{remark}
+This chapter adopts the \emph{usage} convention: smaller is better.
+A capacity bound is written $C_{\max}\in C$, and an execution is feasible when $\Cost(\tau)\preceq C_{\max}$.
+If you prefer the \emph{available budget} convention, reverse the inequalities systematically.
+\end{remark}
+
+\begin{definition}[Cost functional]
+\label{def:cost}
+A \emph{cost functional} is a map
+\[
+\Cost:\ T^\star \to C,
+\]
+assigning a capacity value (resource usage) to each trace.
+\end{definition}
+
+\begin{axiom}[Cost-field agreement (optional)]
+\label{ax:cost-field}
+If traces carry a distinguished capacity component $c(\tau)\in C$, then
+\[
+\Cost(\tau)=c(\tau)\qquad\text{for all }\tau\in T^\star.
+\]
+\end{axiom}
+
+\subsubsection{Capacity-bounded execution (normative)}
+
+\begin{definition}[Capacity-bounded trace set]
+\label{def:exec-bounded}
+For a kernel $K$ and bound $C_{\max}\in C$, define the capacity-bounded execution trace set:
+\[
+\Exec^{\le C_{\max}}_K \ :=\ \{\ \tau\in \Exec^\star_K\ :\ \Cost(\tau)\preceq C_{\max}\ \}.
+\]
+\end{definition}
+
+\begin{definition}[Capacity-bounded conformance]
+\label{def:cap-bounded-conf}
+A kernel $K$ \emph{conforms to a contract $\mathcal{C}$ under bound $C_{\max}$} if
+\[
+\Exec^{\le C_{\max}}_K \subseteq \mathcal{C}.
+\]
+\end{definition}
+
+\begin{remark}
+This is the disciplined form of ``the guarantee holds when we stay within resource budget.''
+\end{remark}
+
+\subsubsection{Targets, achievement, and feasibility regions (normative)}
+
+\begin{definition}[Target space]
+\label{def:target-space}
+Let $\mathcal{T}$ be a \emph{target space}. Minimally, $\mathcal{T}$ contains floor settings and (if Chapter~12 is adopted) stability budgets.
+A canonical choice is:
+\[
+\mathcal{T} := \ThetaSpace \times \BetaSpace,
+\]
+where $\ThetaSpace$ is a poset of floors and $\BetaSpace$ is a poset of invariance budgets.
+\end{definition}
+
+\begin{definition}[Achievement predicate]
+\label{def:achieve}
+Fix $K$ and envelope $\gamma\in \Gamma$. An \emph{achievement predicate} is a map
+\[
+\Ach_{K,\gamma}:\ \mathcal{T}\times C \to 2,
+\]
+where $\Ach_{K,\gamma}(t,C_{\max})=1$ means:
+``under capacity bound $C_{\max}$, the kernel achieves target $t$ in envelope $\gamma$.''
+
+Achievement is defined by a declared contract family; e.g.\ for $t=(\Theta,\beta)$:
+\[
+\Ach_{K,\gamma}((\Theta,\beta),C_{\max})=1
+\quad\Longleftrightarrow\quad
+\Exec^{\le C_{\max}}_K \subseteq \mathcal{C}_{\Theta,\gamma}\ \cap\ \mathcal{C}_{\mathrm{stab}}(\Probe_U,\beta),
+\]
+where $\mathcal{C}_{\Theta,\gamma}$ is the floor contract family (instance-declared) and $\mathcal{C}_{\mathrm{stab}}$ is from Chapter~12 (when present).
+\end{definition}
+
+\begin{definition}[Feasibility region]
+\label{def:feas-region}
+Define the feasibility region at bound $C_{\max}$ as:
+\[
+\Feas(K,\gamma;C_{\max}) \ :=\ \{\ t\in\mathcal{T}\ :\ \Ach_{K,\gamma}(t,C_{\max})=1\ \}.
+\]
+\end{definition}
+
+\begin{axiom}[Capacity monotonicity of achievement]
+\label{ax:ach-mono-ch13}
+If $C_{\max}\preceq C_{\max}'$, then for all $t\in\mathcal{T}$,
+\[
+\Ach_{K,\gamma}(t,C_{\max})=1\ \Rightarrow\ \Ach_{K,\gamma}(t,C_{\max}')=1.
+\]
+\end{axiom}
+
+\begin{corollary}[Feasibility regions are upward-closed in capacity]
+\label{cor:feas-upward}
+If $C_{\max}\preceq C_{\max}'$, then
+\[
+\Feas(K,\gamma;C_{\max}) \subseteq \Feas(K,\gamma;C_{\max}').
+\]
+\end{corollary}
+
+\begin{proof}
+Immediate from Axiom~\ref{ax:ach-mono-ch13}.
+\end{proof}
+
+\subsubsection{Propagation under composition (normative)}
+
+\begin{definition}[Capacity merge operator]
+\label{def:cap-merge}
+A \emph{capacity merge operator} is a binary operation
+\[
+\MergeC:\ C\times C \to C
+\]
+intended to model how costs accumulate under composition.
+\end{definition}
+
+\begin{axiom}[Capacity merge associativity (recommended)]
+\label{ax:cap-merge-assoc}
+For all $c_1,c_2,c_3\in C$,
+\[
+(c_3\MergeC c_2)\MergeC c_1 = c_3\MergeC (c_2\MergeC c_1).
+\]
+\end{axiom}
+
+\begin{axiom}[Capacity merge monotonicity (recommended)]
+\label{ax:cap-merge-mono}
+If $c_1\preceq c_1'$ and $c_2\preceq c_2'$, then
+\[
+c_1\MergeC c_2 \preceq c_1'\MergeC c_2'.
+\]
+\end{axiom}
+
+\begin{axiom}[Sequential cost propagation (requires the composition kit)]
+\label{ax:cost-prop-seq}
+If $\tau_{21}$ is a sequentially composed trace built by the declared constructor kit from $\tau_1,\tau_2$
+(i.e.\ $\tau_{21}=\Compose_{\seq}(\tau_1,\tau_2)$), then
+\[
+\Cost(\tau_{21})=\Cost(\tau_2)\MergeC \Cost(\tau_1).
+\]
+\end{axiom}
+
+\begin{axiom}[Parallel cost propagation (optional)]
+\label{ax:cost-prop-par}
+If $\tau^\star$ is a parallelly composed trace built by the declared constructor kit from $\tau_1,\tau_2$
+(i.e.\ $\tau^\star=\Compose_{\par}(\tau_1,\tau_2)$), then
+\[
+\Cost(\tau^\star)=\Cost(\tau_1)\MergeC \Cost(\tau_2).
+\]
+\end{axiom}
+
+\begin{theorem}[Feasibility propagation for sequential composition (template)]
+\label{thm:feas-prop-seq}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item the kernel composition $K_2\seqc K_1$ is defined by the constructor kit (Chapters~4--7),
+  \item sequential cost propagation (Axiom~\ref{ax:cost-prop-seq}) and monotonicity (Axiom~\ref{ax:cap-merge-mono}) hold,
+  \item there exists an instance-declared \emph{target splitting rule} $S:\mathcal{T}\to \mathcal{T}\times \mathcal{T}$, written
+        $S(t)=(t_1,t_2)$, such that achieving $t_1$ for stage $K_1$ and $t_2$ for stage $K_2$ implies achieving $t$ for the composite.
+\end{enumerate}
+If $t_1\in\Feas(K_1,\gamma;C_1)$ and $t_2\in\Feas(K_2,\gamma';C_2)$ under compatible envelopes
+(as required by the sequential compatibility predicate), then
+\[
+t\in \Feas(K_2\seqc K_1,\gamma;\ C_2\MergeC C_1).
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Combine the existence of composed traces (by the $\Sigma 2$-style constructor kit), the cost bound from Axiom~\ref{ax:cost-prop-seq},
+and the target-splitting implication that lifts stage achievement to composite achievement.
+\end{proof}
+
+\begin{remark}
+The only unavoidable instance-specific design choice is $S$ (how end-to-end targets decompose into per-stage targets).
+Everything else is structural.
+\end{remark}
+
+\subsubsection{Optional: Pareto frontiers (normative option)}
+
+\begin{definition}[Target preorder]
+\label{def:target-preorder}
+Assume $\mathcal{T}$ carries a preorder $\preceq_{\mathcal{T}}$ expressing ``no worse than.''
+For $\mathcal{T}=\ThetaSpace\times\BetaSpace$, a common choice is:
+\[
+(\Theta,\beta)\preceq_{\mathcal{T}}(\Theta',\beta')
+\quad\Longleftrightarrow\quad
+\Theta \preceq_\Theta \Theta' \ \wedge\ \beta \preceq_\beta \beta',
+\]
+with $\preceq_\Theta,\preceq_\beta$ declared by the instance (and their directions made explicit).
+\end{definition}
+
+\begin{definition}[Pareto set at capacity]
+\label{def:pareto}
+Define the Pareto set at bound $C_{\max}$:
+\[
+\Pareto(K,\gamma;C_{\max})
+:= \{\ t\in \Feas(K,\gamma;C_{\max})\ :\ \nexists t'\in \Feas(K,\gamma;C_{\max}) \text{ with } t\prec_{\mathcal{T}} t' \ \}.
+\]
+\end{definition}
+
+\begin{theorem}[Existence of Pareto optima (sufficient conditions)]
+\label{thm:pareto-exists-ch13}
+Assume:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item $\Feas(K,\gamma;C_{\max})$ is nonempty,
+  \item $\mathcal{T}$ is finite, or $\mathcal{T}$ is compact and $\Feas(K,\gamma;C_{\max})$ is closed (under a declared topology),
+  \item the preorder $\preceq_{\mathcal{T}}$ is compatible with that structure (e.g.\ closed upper sets).
+\end{enumerate}
+Then $\Pareto(K,\gamma;C_{\max})$ is nonempty.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Standard maximal-element existence: in the finite case, choose a maximal element directly; in the compact/closed case, apply a maximality argument (e.g.\ via upper contour sets).
+\end{proof}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the capacity enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a capacity poset $(C,\preceq,0_C)$ and a cost functional $\Cost:T^\star\to C$,
+  \item the bounded execution trace set $\Exec^{\le C_{\max}}_K$,
+  \item a target space $\mathcal{T}$ and achievement predicate $\Ach_{K,\gamma}$, hence feasibility regions $\Feas(K,\gamma;C_{\max})$,
+  \item monotonicity of achievement in capacity (Axiom~\ref{ax:ach-mono-ch13}) or an explicit alternative law,
+  \item a capacity merge operator $\MergeC$ and (recommended) associativity/monotonicity laws,
+  \item propagation axioms (Axiom~\ref{ax:cost-prop-seq}; parallel optional) aligned with the composition kit,
+  \item (optional) Pareto notions and sufficient conditions for existence.
+\end{enumerate}
+
+\subsection{Chapter 14. Evidence Enrichment (normative)}
+\label{sec:partV-ch14}
+
+\paragraph{Goal.} Receipts as proof objects with merge-closed verification.
+
+\subsubsection{Claim space and claim extraction (normative)}
+
+\begin{definition}[Claim space]
+\label{def:claim-space}
+Let $\mathsf{Claim}$ be a set of propositions (claims) that receipts may witness.
+A minimal claim schema may include:
+\[
+\phi=(\gamma,\Theta,\beta,C_{\max},\mathrm{in},\mathrm{out},v,d),
+\]
+asserting that under envelope $\gamma$, targets $(\Theta,\beta)$, and capacity bound $C_{\max}$,
+a given input produces a given output/valuation/decision in the intended semantics.
+\end{definition}
+
+\begin{definition}[Claim extraction]
+\label{def:claim-extraction}
+A \emph{claim extraction map} is a function
+\[
+\Phi:\ T^\star \to \mathsf{Claim},
+\]
+assigning to each trace $\tau$ the claim it purports to witness.
+\end{definition}
+
+\begin{remark}
+$\Phi$ is part of the mathematical interface of a Systemics theory: it declares what proposition is being proven by a trace's receipt.
+\end{remark}
+
+\subsubsection{Receipts as proof objects (normative)}
+
+\begin{definition}[Receipt entailment relation]
+\label{def:receipt-entails}
+An \emph{entailment intent} relation is a relation
+\[
+\Vdash\ \subseteq\ R\times \mathsf{Claim},
+\]
+where $r\Vdash \phi$ means ``$r$ is intended as a proof object for claim $\phi$.''
+\end{definition}
+
+\begin{definition}[Verifier]
+\label{def:verifier}
+A \emph{verifier} is a predicate
+\[
+\Verify:\ R\times \mathsf{Claim}\to 2,
+\]
+where $\Verify(r,\phi)=1$ means ``$r$ verifies claim $\phi$.'' The verifier is required to be
+\emph{independent} of the kernel's internal implementation: it depends only on the declared semantics and the receipt schema.
+\end{definition}
+
+\subsubsection{Verifier invariants (normative)}
+
+\begin{axiom}[E0: Canonical invariance of verification]
+\label{ax:E0-verify-canon}
+For all $r\in R$ and all $\phi\in \mathsf{Claim}$,
+\[
+\Verify(r,\phi)=\Verify(\canon(r),\phi).
+\]
+\end{axiom}
+
+\begin{axiom}[E1: Binding consistency]
+\label{ax:E1-verify-bind}
+If $\Verify(r,\phi)=1$, then $\bind(\canon(r))$ is defined and agrees with the envelope component of $\phi$
+on the declared binding fields (e.g.\ epoch/regime identifier).
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:E1-verify-bind} prevents ``receipt laundering'' across regimes: a receipt cannot verify a claim for an unrelated envelope.
+\end{remark}
+
+\subsubsection{Composed claims and evidence closure (normative)}
+
+\begin{definition}[Claim compatibility (sequential)]
+\label{def:claim-compat}
+Two claims $\phi_1,\phi_2\in\mathsf{Claim}$ are \emph{sequentially compatible}, written $\Compat_\phi(\phi_1,\phi_2)$,
+if the output interface fields of $\phi_1$ match the input interface fields of $\phi_2$ in the declared sense
+(e.g.\ output artifact equals next input artifact, and final envelope matches next initial envelope on binding fields).
+\end{definition}
+
+\begin{definition}[Claim composition (sequential)]
+\label{def:claim-compose}
+Given compatible claims $\Compat_\phi(\phi_1,\phi_2)$, define a composed claim
+\[
+\phi_{21}:=\phi_2\diamond \phi_1,
+\]
+whose components are determined by the declared composition mode (last-wins, product, aggregated) and the declared
+capacity/target propagation rule (e.g.\ $C_{\max,21}=C_{\max,2}\MergeC C_{\max,1}$ when applicable).
+\end{definition}
+
+\begin{definition}[Merge-closed verification (sequential)]
+\label{def:merge-closed-verify}
+Fix a receipt merge operator $\MergeR:R\times R\to R$ (from the composition kit) and define merged receipts by
+$r_{21}:=\canon(r_2\MergeR r_1)$.
+The verifier is \emph{merge-closed for sequential composition} if whenever
+\[
+\Verify(r_1,\phi_1)=1,\quad \Verify(r_2,\phi_2)=1,\quad \Compat_\phi(\phi_1,\phi_2),
+\]
+then the verifier can (from $r_{21}$) validate (i) the presence/references of subproofs for $r_1,r_2$, and (ii) the interface compatibility checks,
+and thereby conclude $\Verify(r_{21},\phi_2\diamond \phi_1)=1$.
+\end{definition}
+
+\begin{theorem}[Evidence closure under sequential composition]
+\label{thm:evidence-closure}
+Assume merge-closed verification (Definition~\ref{def:merge-closed-verify}). Then for all receipts and claims:
+\[
+\Verify(r_1,\phi_1)=1\ \wedge\ \Verify(r_2,\phi_2)=1\ \wedge\ \Compat_\phi(\phi_1,\phi_2)
+\ \Rightarrow\ 
+\Verify\!\big(\canon(r_2\MergeR r_1),\ \phi_2\diamond \phi_1\big)=1.
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+By merge-closed verification, $\canon(r_2\MergeR r_1)$ is checkable as a structured aggregate of the two subproofs and the compatibility witness.
+Since each subproof verifies its claim and the compatibility checks pass, the composed claim verifies.
+Axioms~\ref{ax:E0-verify-canon}--\ref{ax:E1-verify-bind} ensure canonical stability and envelope coherence.
+\end{proof}
+
+\begin{remark}
+A parallel version is obtained by replacing $\diamond$ with the parallel claim constructor (when $\parc$ is adopted) and by using the parallel trace/receipt constructor kit.
+\end{remark}
+
+\subsubsection{Proof-carrying conformance (normative)}
+
+\begin{definition}[Proof-carrying conformance contract]
+\label{def:pc-contract}
+Define the \emph{proof-carrying conformance contract} $\mathcal{C}_{\mathrm{pc}}\subseteq T^\star$ by:
+\[
+\tau\in \mathcal{C}_{\mathrm{pc}}
+\quad:\Longleftrightarrow\quad
+\Verify\!\big(r(\tau),\,\Phi(\tau)\big)=1,
+\]
+where $r(\tau)$ is the receipt component of $\tau$ and $\Phi$ is the claim extraction map (Definition~\ref{def:claim-extraction}).
+\end{definition}
+
+\begin{theorem}[Proof-carrying execution]
+\label{thm:pc-exec}
+If a kernel $K$ conforms to $\mathcal{C}_{\mathrm{pc}}$ (in the Chapter~6 sense), then every execution trace of $K$
+is accompanied by independently verifiable evidence of its declared claim.
+\end{theorem}
+
+\begin{proof}
+Immediate from Definition~\ref{def:pc-contract} and the definition of conformance as subset inclusion.
+\end{proof}
+
+\subsubsection{Output checklist (normative)}
+
+To complete the evidence enrichment, a Systemics theory must specify:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item a claim space $\mathsf{Claim}$ and a claim extraction map $\Phi:T^\star\to\mathsf{Claim}$,
+  \item an entailment i
+
+% ============================================================
+\section{Part VI --- Canon: Exemplars as Theorems in the Wild}
+
+\subsection{Chapter 15. Exemplar Method (normative template)}
+\label{sec:exemplar-method}
+
+\paragraph{Goal.} Define what counts as a canonical exemplar for the field.
+
+\subsubsection{Exemplar object (normative)}
+
+\begin{definition}[Canonical exemplar]
+\label{def:canonical-exemplar}
+A \emph{canonical exemplar} is a tuple
+\[
+\mathbb{E}=(\mathbb{U},\ \mathbb{K},\ \mathbb{A},\ \mathbb{O},\ \mathbb{X}),
+\]
+where:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item $\mathbb{U}$ (\textbf{Universes}) instantiates the primitive carriers from Chapter~2:
+  \[
+  (U,V,2,\Gamma,R,T)\ \text{ and trace type }T^\star;
+  \]
+  optionally a capacity space $(C,\preceq)$.
+  \item $\mathbb{K}$ (\textbf{Kernel family}) specifies a nonempty set of kernels (atomic generators) together with their execution semantics $\Exec_K$ (Chapter~7),
+  and the associated trace fields (including receipts).
+  \item $\mathbb{A}$ (\textbf{Composition kit / process algebra instance}) instantiates Chapter~4:
+  \[
+  (\seqc,\parc,\mathrm{Id},\Compat,\Compose_{\seq},\Compose_{\par},\MergeR,\MergeC,\ldots),
+  \]
+  with any optional components explicitly marked as optional.
+  \item $\mathbb{O}$ (\textbf{Observables \& induced equivalence}) instantiates Chapter~9:
+  an observable view $\cview:T^\star\to\mathcal{O}$, trace equivalence $\approx$, and induced kernel equivalence $\simeq$ (with congruence conditions).
+  \item $\mathbb{X}$ (\textbf{Optional enrichments}) instantiates at least one enrichment chapter (Part~V), e.g.\
+  stability (Chapter~12), capacity (Chapter~13), or evidence (Chapter~14), with all required structures.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The tuple notation is only packaging: any exemplar is acceptable if it presents the same data unambiguously and checks the same obligations.
+\end{remark}
+
+\subsubsection{Exemplar obligations (normative)}
+
+\begin{definition}[Exemplar obligations]
+\label{def:exemplar-obligations}
+A candidate exemplar $\mathbb{E}$ is \emph{admissible} as canonical iff it satisfies all obligations below.
+
+\paragraph{(E0) Instantiation completeness.}
+$\mathbb{E}$ explicitly instantiates:
+\begin{enumerate}[leftmargin=*, itemsep=0.15em]
+  \item universes and trace schema (Chapter~2),
+  \item the process algebra instance / composition kit (Chapter~4),
+  \item observational interface ($\cview$, $\approx$, $\simeq$) (Chapter~9),
+  \item at least one enrichment package (Chapters~12--14).
+\end{enumerate}
+
+\paragraph{(E1) Conformance preservation demonstration.}
+$\mathbb{E}$ must include at least one explicit theorem instance of Chapter~6:
+there exist contracts $\mathcal{C}_1,\mathcal{C}_2$ and kernels $K_1,K_2$ such that:
+\[
+K_1\models\mathcal{C}_1,\quad K_2\models\mathcal{C}_2
+\quad\Rightarrow\quad
+K_2\seqc K_1 \models (\mathcal{C}_2\cseq \mathcal{C}_1),
+\]
+with all compatibility and constructor conditions checked in the instance.
+
+\paragraph{(E2) Equivalence/normalization demonstration.}
+$\mathbb{E}$ must exhibit at least one nontrivial refactoring proof using Chapter~11:
+there exist expressions $E,E'$ with
+\[
+E \RewriteStar E'
+\quad\text{and}\quad
+\llbracket E\rrbracket \simeq \llbracket E'\rrbracket,
+\]
+and either:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item an explicit normalization function $\Norm$ with soundness, or
+  \item an explicit normal-form predicate $\NF$ plus a proof that the chosen refactoring reaches $\NF$ and preserves $\simeq$.
+\end{itemize}
+
+\paragraph{(E3) Enrichment demonstration.}
+$\mathbb{E}$ must demonstrate at least one enrichment as an explicit theorem instance:
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item \textbf{Stability:} a probe family and a wobble structure yielding a stated invariance result, or
+  \item \textbf{Capacity:} a feasibility region statement with propagation under $\MergeC$, or
+  \item \textbf{Evidence:} an evidence closure statement for merged receipts verifying composed claims.
+\end{itemize}
+
+\paragraph{(E4) Verifier-checkability (evidence interface).}
+If the exemplar uses receipts (it must, by Chapters~2 and~7), then it must specify a verifier interface
+at the level of Chapter~8/14 such that the exemplar's receipt claims are \emph{checkable}:
+either
+\begin{itemize}[leftmargin=*, itemsep=0.15em]
+  \item a concrete verifier predicate $\Verify(r,\phi)$ is given, or
+  \item an abstract verifier is given with explicitly stated axioms sufficient to justify the exemplar's verification steps,
+        including canonical invariance and binding consistency.
+\end{itemize}
+In particular, if evidence enrichment (Chapter~14) is the chosen enrichment, the exemplar must satisfy merge-closed verification.
+
+\end{definition}
+
+\subsubsection{Canonical exemplar output format (normative)}
+
+\begin{definition}[Exemplar dossier]
+\label{def:exemplar-dossier}
+A canonical exemplar must be presented as an \emph{exemplar dossier} containing:
+\begin{enumerate}[leftmargin=*, itemsep=0.2em]
+  \item \textbf{Instantiation page:} explicit definitions for $\mathbb{U}$, $\mathbb{K}$, $\mathbb{A}$, $\mathbb{O}$, and chosen $\mathbb{X}$.
+  \item \textbf{Obligation proofs:} proofs (or proof sketches labeled as such) satisfying (E1)--(E4) of Definition~\ref{def:exemplar-obligations}.
+  \item \textbf{Receipts/verifier note:} a statement of the receipt schema and verifier interface used, including binding fields and canonicalization.
+  \item \textbf{Refactoring exhibit:} at least one normalization/refactoring example with the $\simeq$ witness.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}
+The exemplar dossier is the field-level unit of pedagogy and validation: it is what can be cited, replayed abstractly, and compared across domains.
+\end{remark}
+
+\subsection{Chapters 16--18. EX1--EX3 (worked)}
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item EX1: Audit/compliance (envelope epochs + proof-carrying receipts).
+  \item EX2: ML evaluation robustness (probes+wobble, stability budgets).
+  \item EX3: Safety case / engineering thresholding (floors, capacity feasibility).
+\end{itemize}
+
+% ============================================================
+\section{Part VII --- Field Notes: Open Problems and Extensions}
+
+\subsection{Chapter 19. Minimality, Independence, and Normal Forms (informative)}
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item Which axioms are independent?
+  \item Alternative equivalences (trace vs observable vs proof-relevant).
+  \item Normal form uniqueness and completeness trade-offs.
+\end{itemize}
+
+\subsection{Chapter 20. Morphisms / Transport (optional future chapter)}
+\begin{itemize}[leftmargin=*, itemsep=0.2em]
+  \item Structure-preserving maps between Systemics instances (functorial transport of contracts/budgets/evidence).
+  \item When it becomes necessary (cross-domain translation).
+\end{itemize}
+
+\section*{Rewrite Plan (from current E1--E6)}
+\begin{enumerate}[leftmargin=*, itemsep=0.25em]
+  \item Extract shared prelims (universes, traces, contracts, canonicalization kit) into Part I.
+  \item Move $\Sigma 2$ conformance preservation into Part II (Chapter 6).
+  \item Move $\Sigma 1$ execution/replay/verify into Part III (Chapters 7--8).
+  \item Move $\Sigma 3$ equivalence + rewriting into Part III/IV (Chapters 9--11).
+  \item Move $\Sigma 4$ stability into Part V (Chapter 12) as a contract enrichment.
+  \item Move $\Sigma 5$ capacity into Part V (Chapter 13) as feasibility enrichment.
+  \item Move $\Sigma 6$ evidence into Part V (Chapter 14) as proof-relevant enrichment.
+  \item Reframe EX1--EX3 as Part VI, each explicitly pointing back to theorems and axioms used.
+\end{enumerate}
+
+\end{document}
